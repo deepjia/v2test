@@ -15,7 +15,7 @@ It's easy to develop new engines.
 Python3 with modules:
 
 selenium requests xlrd xlwt ddt html-testRunner
-## Install
+## Installation
 Install Git and Python 3. Homrebrew is recommended for macOS.
 Then, clone the repo:
 
@@ -41,27 +41,30 @@ For Windows with Python 3 and pip installed:
 pip install -r requirements.txt
 ```
 ## Structure
-### config.ini
+#### config.ini
 Configuration for framwork and engines.
-### run.py
+#### run.py
 V2Test framework, where tests start.
-### Cases
+#### Cases
 Case files in folder `Cases`, and there are examples.
 
 `xlsx` recommended, and `xls` will be deprecated later.
-### Files
+#### Files
 Test files in folder `Files`, for example scripts to run and files to upload.
-### Engines
+#### Engines
 V2Test engines here.
-### Reports
+#### Reports
 Test reports will be generated here.
-## Guide
-Coming soon...
+## Usage
+(Coming soon...)
 
-Now you can refer to the examples in `Cases`, it is easy to understand how to create cases.
-## Run
-Edit `config.ini` and your cases, then:
+Now you can refer to the examples in `Cases`, it is easy to understand how to create test cases.
+
+All settings are in `config.ini`.
+
+Once finished:
 
 ```
 ./run.py
 ```
+Test report will be generated in `Reports`.
