@@ -12,17 +12,33 @@ Engines:
 It's easy to develop new engines.
 
 ## Prerequisites
-Python3 with moudles:
+Python3 with modules:
 
 selenium requests xlrd xlwt ddt html-testRunner
-
-For macOS users, I recommend Homebrew and pip3 with `--user`:
+## Install
+Install Git and Python 3. Homrebrew is recommended for macOS.
+Then, clone the repo:
 
 ```
-brew install python3 git
+git clone https://github.com/deepjia/v2test.git
+```
+For macOS, I recommend pip3 with `--user` so that `sudo` is unnecessary:
+
+```
 pip3 install -r requirements.txt --user -U
 PATH=$PATH:~/Library/Python/3.6/bin
-git clone https://github.com/deepjia/v2test.git
+```
+
+For Linux with Python 3 installed:
+
+```
+pip3 install -r requirements.txt
+```
+
+For Windows with Python 3 and pip installed:
+
+```
+pip install -r requirements.txt
 ```
 ## Structure
 ### config.ini
@@ -39,11 +55,11 @@ Test files in folder `Files`, for example scripts to run and files to upload.
 V2Test engines here.
 ### Reports
 Test reports will be generated here.
-## Case Guide
+## Guide
 Coming soon...
 
 Now you can refer to the examples in `Cases`, it is easy to understand how to create cases.
-## Usage
+## Run
 Edit `config.ini` and your cases, then:
 
 ```
