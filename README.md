@@ -79,13 +79,16 @@ Always set DRIVER=Safari, BIT=64 in config.ini
 
 ### IE Driver (Windows only):
 
-Download [IEDriverServer](http://selenium-release.storage.googleapis.com/index.html), unpack and put IEDriverServer.exe in `./Engines/win32` or `./Engines/win32`
-Set DRIVER=ie, BIT=32 or BIT=64 in config.ini (Depend on your browser)
+Download [IEDriverServer](http://selenium-release.storage.googleapis.com/index.html), unpack and put IEDriverServer.exe in `Engines/win32/` or `Engines/win64/`
+
+Set DRIVER=IE, BIT=32 or BIT=64 in config.ini (Depend on your browser)
 
 ### Firefox Driver:
-Download [IEDriverServer](http://selenium-release.storage.googleapis.com/index.html), unpack and put IEDriverServer.exe in `./Engines/win32` or `./Engines/win32`
+Download [geckodriver](https://github.com/mozilla/geckodriver/releases), unpack and put `geckodriver` or `geckodriver.exe` in `Engines/.../`
+
 Set DRIVER=Firefox, BIT=32 or BIT=64 in config.ini (Depend on your browser)
 
 ### Chrome Driver:
-Download [geckodriver](http://selenium-release.storage.googleapis.com/index.html), unpack and put IEDriverServer.exe in `./Engines/win32` or `./Engines/win32`
-Set DRIVER=Firefox, BIT=32 or BIT=64 in config.ini (Depend on your browser and your )
+Download [chromedriver](https://chromedriver.storage.googleapis.com/index.html), unpack and put `chromedriver` or `chromedriver.exe` in `Engines/.../`
+
+Set DRIVER=Chrome, BIT=32 or BIT=64 in config.ini (Depend on your browser and your )
