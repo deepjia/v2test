@@ -35,7 +35,7 @@ class XLSX:
 
     def read_line(self, sheet):
         run_flag = None
-        for i in range(2, sheet.max_row):
+        for i in range(2, sheet.max_row + 1):
             case_id = sheet.cell(row=i, column=2).value
 
             if case_id:
@@ -112,7 +112,7 @@ class XLS:
             self.valid_rows.append([sheet.cell(i, x).value for x in range(0, 9)])
             self.valid_rows[-1].extend((self.file, os.path.basename(self.file), sheet.name, i))
 
-            if i == sheet.nrows or sheet.cell(i + 1, 1).value:
+            if i == sheet.nrows - 1 or sheet.cell(i + 1, 1).value:
                 self.cases.append(self.valid_rows)
                 self.valid_rows = []
 

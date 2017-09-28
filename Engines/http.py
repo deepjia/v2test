@@ -25,7 +25,7 @@ class Test:
                 value = float(value)
             elif key in ('headers', 'params'):
                 value = eval(value)
-            elif value in ('True', 'False'):
+            elif value.title() in ('True', 'False'):
                 value = {'True': True, 'False': False}[key]
             self.kw[key] = value
 

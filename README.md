@@ -7,9 +7,13 @@ Engines:
 * [UI] Selenium browser automation test.
 * [HTTP] Requests HTTP interface test.
 * [Shell] Shell command/script test.
-* [DB] MySQL database test. - Coming later...
+* [DB] MySQL database test. - (Coming later...)
 
 It's easy to develop new engines.
+
+To do:
+
+* Remote mode. 
 
 ## Prerequisites
 Python3 with modules:
@@ -68,8 +72,9 @@ Once finished:
 ./run.py
 ```
 Test report will be generated in `Reports`.
-## Engine: UI
-#### Safari Driver (macOS only):
+### Engine: UI
+#### Driver
+##### Safari Driver (macOS only):
 
 Since OS X El Capitan, [safaridriver](https://webkit.org/blog/6900/webdriver-support-in-safari-10/) is preinstalled.
 
@@ -79,18 +84,29 @@ Enable Remote Automation in the Develop menu. (Develop > Allow Remote Automation
 
 Always set `DRIVER=Safari`, `BIT=64` in `config.ini`
 
-#### IE Driver (Windows only):
+##### IE Driver (Windows only):
 
 Download [IEDriverServer](http://selenium-release.storage.googleapis.com/index.html), unpack and put IEDriverServer.exe in `Engines/win32/` or `Engines/win64/`
 
 Set `DRIVER=IE`, `BIT=32` or `BIT=64` in `config.ini` (Depend on your browser)
 
-#### Firefox Driver:
+##### Firefox Driver:
 Download [geckodriver](https://github.com/mozilla/geckodriver/releases), unpack and put `geckodriver` or `geckodriver.exe` in `Engines/.../`, eg: `Engines/mac64/`
 
 Set `DRIVER=Firefox`, `BIT=32` or `BIT=64` in `config.ini` (Depend on your browser)
 
-#### Chrome Driver:
+##### Chrome Driver:
 Download [chromedriver](https://chromedriver.storage.googleapis.com/index.html), unpack and put `chromedriver` or `chromedriver.exe` in `Engines/.../`
 
 Set `DRIVER=Chrome`, `BIT=32` or `BIT=64` in config.ini (Depend on your browser)
+
+##### Locator：
+Locator is used to find elements in web pages.
+
+***id, name, xpath, css_selector, class\_name, tag\_name, link\_text, partial\_link\_text***
+
+Find elements by id, name, class name
+
+***saved***
+
+Find previously saved elements. (Saved by the ***save*** action.)
