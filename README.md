@@ -82,23 +82,29 @@ Ensure that the Develop menu is available. (Safari > Preferences > Show Develop)
 
 Enable Remote Automation in the Develop menu. (Develop > Allow Remote Automation).
 
-Always set `DRIVER=Safari`, `BIT=64` in `config.ini`
+Always set *DRIVER=Safari*, *BIT=64* in `config.ini`
 
 ##### IE Driver (Windows only):
 
-Download [IEDriverServer](http://selenium-release.storage.googleapis.com/index.html), unpack and put IEDriverServer.exe in `Engines/win32/` or `Engines/win64/`
+Download [IEDriverServer](http://selenium-release.storage.googleapis.com/index.html).
 
-Set `DRIVER=IE`, `BIT=32` or `BIT=64` in `config.ini` (Depend on your browser)
+Unpack and put IEDriverServer.exe in `Engines/win32/` or `Engines/win64/`
+
+Set *DRIVER=IE*, *BIT=32* or *BIT=64* in `config.ini` (Depend on your browser)
 
 ##### Firefox Driver:
-Download [geckodriver](https://github.com/mozilla/geckodriver/releases), unpack and put `geckodriver` or `geckodriver.exe` in `Engines/.../`, eg: `Engines/mac64/`
+Download [geckodriver](https://github.com/mozilla/geckodriver/releases).
 
-Set `DRIVER=Firefox`, `BIT=32` or `BIT=64` in `config.ini` (Depend on your browser)
+Unpack and put `geckodriver` or `geckodriver.exe` in `Engines/.../`, eg: `Engines/mac64/`
+
+Set *DRIVER=Firefox*, *BIT=32* or *BIT=64* in `config.ini` (Depend on your browser)
 
 ##### Chrome Driver:
-Download [chromedriver](https://chromedriver.storage.googleapis.com/index.html), unpack and put `chromedriver` or `chromedriver.exe` in `Engines/.../`
+Download [chromedriver](https://chromedriver.storage.googleapis.com/index.html).
 
-Set `DRIVER=Chrome`, `BIT=32` or `BIT=64` in config.ini (Depend on your browser)
+Unpack and put `chromedriver` or `chromedriver.exe` in `Engines/.../`
+
+Set *DRIVER=Chrome*, *BIT=32* or *BIT=64* in `config.ini` (Depend on your browser)
 
 ##### Locator：
 Locator is used to find elements in web pages.
