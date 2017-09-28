@@ -10,7 +10,7 @@ class Test:
         self.kw_dict = {}
 
     # encapsulate params
-    def locate(self, key, value):
+    def locator(self, key, value):
         if key in ('<headers>', '<params>'):
             self.kw_temp = self.kw
             self.kw = {}

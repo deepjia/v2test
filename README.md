@@ -74,7 +74,7 @@ Once finished:
 ```
 Test report will be generated in `Reports`.
 ## Usage - UI Engine
-### Driver
+### [Config] Driver
 #### Safari Driver (macOS only):
 
 Since OS X El Capitan, [safaridriver](https://webkit.org/blog/6900/webdriver-support-in-safari-10/) is preinstalled.
@@ -93,13 +93,60 @@ Unpack and put the executable file in  `Engines/.../`
 
 Set *DRIVER=IE or Firefox or Chrome*, *BIT=32 or 64* in `config.ini` (Depend on your browser)
 
-#### Locator：
+### [Case] Locator
 Locator is used to find elements in web pages.
 
 ***id, name, xpath, css_selector, class\_name, tag\_name, link\_text, partial\_link\_text***
 
-Find elements by id, name, class name
+Find elements by id, name, xpath etc.
 
 ***saved***
 
 Find previously saved elements. (Saved by the ***save*** action.)
+
+### [Case] Action
+Action is used to interact with engines, which is also known as "keyword".
+
+***open***
+
+Open the URL in *Value*, the default URL is in `config.ini`.
+
+***close***
+
+Close current browser window.
+
+***type***
+
+Input *Value* in text areas.
+
+***click***
+
+Click the element.
+
+***press***
+
+Press Key *Value* of the keyboard.
+
+***wait.element***
+
+Wait for the element to appear, up to *Value* seconds.
+
+***save***
+
+Save the element with the name *Value*, in order to be found by locator ***saved***.
+
+***equal.\*\****
+
+Check whether *Value* equals the returned.** value.
+
+***in.\*\****
+
+Check whether *Value* in the returned.** value.
+
+***!equal.\*\*, !in.\*\****
+
+"!" means not.
+## Usage - HTTP Engine
+Coming soon...
+## Usage - Shell Engine
+Coming soon...

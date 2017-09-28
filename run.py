@@ -49,26 +49,26 @@ class RunTest(unittest.TestCase):
             logging.info('[Case] ' + data[0][1] + ': ' + data[0][2])
             # read lines from data
             for i in range(0, len(data)):
-                locate, locate_value, action, action_value = \
+                locator, locator_value, action, action_value = \
                     data[i][5], str(data[i][6]) if data[i][6] else '', \
                     data[i][7], str(data[i][8]) if data[i][8] else ''
 
                 # locate elements or encapsulate params
-                if locate:
-                    if locate == 'saved':
-                        logging.info('[Step] {Element.saved} ' + locate_value)
-                        locate, locate_value = saved_elements[locate_value]
+                if locator:
+                    if locator == 'saved':
+                        logging.info('[Step] {Element.saved} ' + locator_value)
+                        locator, locator_value = saved_elements[locator_value]
                     if action == 'wait.element':
                         if not action_value:
                             self.fail('This action need a value.')
                             # raise ValueError('Need a value')
-                        logging.info('[Step] {Element} ' + locate + ' = ' + locate_value +
+                        logging.info('[Step] {Element} ' + locator + ' = ' + locator_value +
                                      ' wait.element for | ' + action_value + ' s')
 
-                        self.run.locate_timeout(locate, locate_value, action_value)
+                        self.run.locator_timeout(locator, locator_value, action_value)
                     else:
-                        logging.info('[Step] {Element/Parameter} ' + locate + (' = ' if locate_value else '') + locate_value)
-                        self.run.locate(locate, locate_value)
+                        logging.info('[Step] {Element/Parameter} ' + locator + (' = ' if locator_value else '') + locator_value)
+                        self.run.locator(locator, locator_value)
 
                 if action:
                     # actions by engine
@@ -82,7 +82,7 @@ class RunTest(unittest.TestCase):
 
                     elif action == 'save':
                         logging.info('[Step] Element ' + action.lower() + 'd to ' + action_value)
-                        saved_elements[action_value] = (self.run.last_locate, self.run.last_locate_value)
+                        saved_elements[action_value] = (self.run.last_locator, self.run.last_locator_value)
 
                     elif action == 'wait':
                         logging.info('[Step] ' + action.title() + ' = ' + action_value)

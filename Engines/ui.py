@@ -43,9 +43,9 @@ class Test:
         return self.driver.get(url)
 
     # find elements
-    def locate(self, locate, locate_value):
-        self.last_locate, self.last_locate_value = locate, locate_value
-        self.elem = self.driver.find_element(getattr(By, locate.upper()), locate_value)
+    def locator(self, locator, locator_value):
+        self.last_locator, self.last_locator_value = locator, locator_value
+        self.elem = self.driver.find_element(getattr(By, locator.upper()), locator_value)
 
     def close(self, value):
         if driver == 'Safari':
@@ -61,9 +61,9 @@ class Test:
     def click(self, value):
         self.elem.click()
 
-    def locate_timeout(self, locate, locate_value, time):
+    def locator_timeout(self, locator, locator_value, time):
         self.elem = WebDriverWait(self.driver, int(time)).until(
-            EC.presence_of_element_located((getattr(By, locate.upper()), locate_value))
+            EC.presence_of_element_located((getattr(By, locator.upper()), locator_value))
         )
 
     # send keys
