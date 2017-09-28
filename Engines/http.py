@@ -1,52 +1,64 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import requests
+from Engines.config import *
 
 
 class Test:
     def __init__(self):
         self.kw = {}
+        self.kw_dict = {}
 
     # encapsulate params
     def locate(self, key, value):
-        if key or value:
-            self.kw[key] = value
-        return self
 
-    # get
+        if key in ('<headers>', '<params>'):
+            self.kw_temp = self.kw
+            self.kw = {}
+        elif key == '</headers>':
+            self.kw_dict['headers'] = self.kw
+            self.kw = self.kw_temp
+        elif key == '</params>':
+            self.kw_dict['params'] = self.kw
+            self.kw = self.kw_temp
+        else:
+            if key == "timeout":
+                value = float(value)
+            elif key in ('timeout', 'headers', 'params'):
+                value = {'timeout': float(value), 'headers': False}[key]
+            elif value in ('True', 'False'):
+                value = {'True': True, 'False': False}[key]
+            self.kw[key] = value
+
+    def locate_action(self, key, value, action, action_value):
+        if action == 'headers':
+            self.headers=self.kw
+        if action == 'params':
+            self.params = self.kw
+
     def get(self, url):
-        r = requests.get(url, **self.kw)
-        self.kw = {}
-        return r
+        return self.action("get", url)
 
     def post(self, url):
-        r = requests.post(url, **self.kw)
-        self.kw = {}
-        return r
+        return self.action("post", url)
 
     def head(self, url):
-        r = requests.head(url, **self.kw)
-        self.kw = {}
-        return r
+        return self.action("head", url)
 
     def put(self, url):
-        r = requests.put(url, **self.kw)
-        self.kw = {}
-        return r
+        return self.action("put", url)
 
     def delete(self, url):
-        r = requests.delete(url, **self.kw)
-        self.kw = {}
-        return r
+        return self.action("delete", url)
 
     def options(self, url):
-        r = requests.options(url, **self.kw)
-        self.kw = {}
-        return r
+        return self.action("options", url)
 
     # all requests
-    def request(self, action, url):
-        r = getattr(requests, action)(url, **self.kw)
+    def action(self, action, url):
+        if url == '':
+            url = CONFIG.get('HTTP', 'URL')
+        r = getattr(requests, action)(url, **self.kw, **self.kw_dict)
         self.kw = {}
         return r
 

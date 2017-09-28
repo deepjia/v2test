@@ -68,3 +68,24 @@ Once finished:
 ./run.py
 ```
 Test report will be generated in `Reports`.
+## Engine: UI
+#### Safari Driver (macOS only):
+
+Ensure that the Develop menu is available. (Safari > Preferences > Show Develop)
+
+Enable Remote Automation in the Develop menu. (Develop > Allow Remote Automation).
+
+Always set DRIVER=Safari, BIT=64 in config.ini
+
+### IE Driver (Windows only):
+
+Download [IEDriverServer](http://selenium-release.storage.googleapis.com/index.html), unpack and put IEDriverServer.exe in `./Engines/win32` or `./Engines/win32`
+Set DRIVER=ie, BIT=32 or BIT=64 in config.ini (Depend on your browser)
+
+### Firefox Driver:
+Download [IEDriverServer](http://selenium-release.storage.googleapis.com/index.html), unpack and put IEDriverServer.exe in `./Engines/win32` or `./Engines/win32`
+Set DRIVER=Firefox, BIT=32 or BIT=64 in config.ini (Depend on your browser)
+
+### Chrome Driver:
+Download [geckodriver](http://selenium-release.storage.googleapis.com/index.html), unpack and put IEDriverServer.exe in `./Engines/win32` or `./Engines/win32`
+Set DRIVER=Firefox, BIT=32 or BIT=64 in config.ini (Depend on your browser and your )

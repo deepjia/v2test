@@ -58,12 +58,12 @@ class RunTest(unittest.TestCase):
                     if locate == 'saved':
                         logging.info('[Step] {Element.saved} ' + locate_value)
                         locate, locate_value = saved_elements[locate_value]
-                    if action == 'timeout':
+                    if action == 'wait.element':
                         if not action_value:
                             self.fail('This action need a value.')
                             # raise ValueError('Need a value')
                         logging.info('[Step] {Element} ' + locate + ' = ' + locate_value +
-                                     ' Timeout| ' + action_value + ' s')
+                                     ' wait.element for | ' + action_value + ' s')
 
                         self.run.locate_timeout(locate, locate_value, action_value)
                     else:
@@ -117,14 +117,10 @@ class RunTest(unittest.TestCase):
 
     def tearDown(self):
         """Do some cleaning"""
-        try:
-            self.run.clean()
-        except Exception:
-            pass
-        finally:
-            if self.e:
-                self.fail(self.e)
-            logging.info('[Case] End.')
+        self.run.clean()
+        if self.e:
+            self.fail(self.e)
+        logging.info('[Case] End.')
 
 
 if __name__ == '__main__':
