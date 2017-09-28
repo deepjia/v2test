@@ -35,7 +35,6 @@ class RunTest(unittest.TestCase):
     def setUp(self):
         """Init Case"""
         logging.info('')
-        # logging.info(dir(self))
 
     @ddt.data(*cases_all)
     def test_Case(self, data):
@@ -51,7 +50,8 @@ class RunTest(unittest.TestCase):
             # read lines from data
             for i in range(0, len(data)):
                 locate, locate_value, action, action_value = \
-                    data[i][5], data[i][6], data[i][7], str(data[i][8]) if data[i][8] else ''
+                    data[i][5], str(data[i][6]) if data[i][6] else '', \
+                    data[i][7], str(data[i][8]) if data[i][8] else ''
 
                 # locate elements or encapsulate params
                 if locate:
@@ -67,7 +67,7 @@ class RunTest(unittest.TestCase):
 
                         self.run.locate_timeout(locate, locate_value, action_value)
                     else:
-                        logging.info('[Step] {Element} ' + locate + ' = ' + locate_value)
+                        logging.info('[Step] {Element/Parameter} ' + locate + (' = ' if locate_value else '') + locate_value)
                         self.run.locate(locate, locate_value)
 
                 if action:
@@ -91,15 +91,22 @@ class RunTest(unittest.TestCase):
                     elif action == 'log':
                         logging.info('[Step] Response ' + ' = ' + str(response))
 
+                    elif action.lower().split('.')[0] == 'log':
+                        message = getattr(response, action.lower().split('.')[-1])
+                        logging.info('[Step] Response ' + ' = ' + str(message))
+
                     # action check (response)
                     elif action.lower() in check:
-                        logging.info('[Step] Check ' + action_value + '" ' + action.lower() + ' | ' + str(response))
+                        logging.info('[Step] Check ' + action_value + ' ' + action.lower() + ' ' +
+                                     str(response).replace('\n', '')[0:500] + ' (Use log action to show more)')
                         getattr(self, check[action.lower()])(action_value, response)
 
                     # action check (response.attribute)
                     elif action.lower().split('.')[0] in check:
                         message = getattr(response, action.lower().split('.')[-1])
-                        logging.info('[Step] Check "' + action_value + '" ' + action.lower() + ' | ' + message)
+                        message = str(message)
+                        logging.info('[Step] Check ' + action_value + ' ' + action.lower() + ' ' +
+                                     message.replace('\n', '')[0:500] + ' (Use log action to show more)')
                         getattr(self, check[action.lower().split('.')[0]])(action_value, message)
 
         except Exception as e:
@@ -107,7 +114,7 @@ class RunTest(unittest.TestCase):
             i = str(i + 1 if i else i)
             self.e = '[Line ' + i + '] ' + str(e)
             result.append((sheet_name, case_row, 10, 'fail'))
-            # raise
+            raise
         else:
             self.e = ''
             result.append((sheet_name, case_row, 10, 'pass'))

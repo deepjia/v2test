@@ -11,7 +11,6 @@ class Test:
 
     # encapsulate params
     def locate(self, key, value):
-
         if key in ('<headers>', '<params>'):
             self.kw_temp = self.kw
             self.kw = {}
@@ -24,17 +23,11 @@ class Test:
         else:
             if key == "timeout":
                 value = float(value)
-            elif key in ('timeout', 'headers', 'params'):
-                value = {'timeout': float(value), 'headers': False}[key]
+            elif key in ('headers', 'params'):
+                value = eval(value)
             elif value in ('True', 'False'):
                 value = {'True': True, 'False': False}[key]
             self.kw[key] = value
-
-    def locate_action(self, key, value, action, action_value):
-        if action == 'headers':
-            self.headers=self.kw
-        if action == 'params':
-            self.params = self.kw
 
     def get(self, url):
         return self.action("get", url)

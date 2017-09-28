@@ -71,11 +71,13 @@ Test report will be generated in `Reports`.
 ## Engine: UI
 #### Safari Driver (macOS only):
 
+Since OS X El Capitan, [safaridriver](https://webkit.org/blog/6900/webdriver-support-in-safari-10/) is preinstalled.
+
 Ensure that the Develop menu is available. (Safari > Preferences > Show Develop)
 
 Enable Remote Automation in the Develop menu. (Develop > Allow Remote Automation).
 
-Always set DRIVER=Safari, BIT=64 in config.ini
+Always set `DRIVER=Safari`, `BIT=64` in `config.ini`
 
 #### IE Driver (Windows only):
 
