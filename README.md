@@ -164,9 +164,9 @@ Test report will be generated in `Reports`.
 
 ### Config
 
-#### Safari Driver (macOS only):
+##### Safari
 
-Since OS X El Capitan, [safaridriver](https://webkit.org/blog/6900/webdriver-support-in-safari-10/) is preinstalled.
+Since OS X El Capitan, [safaridriver](https://webkit.org/blog/6900/webdriver-support-in-safari-10/)(macOS only) is preinstalled.
 
 Keep Safari > Preferences > Show Develop checked.
 
@@ -174,7 +174,7 @@ Keep Develop > Allow Remote Automation checked.
 
 Set *DRIVER=Safari*, *BIT=64* in `config.ini`
 
-#### IE/Firefox/Chrome Driver:
+##### IE/Firefox/Chrome
 
 Download [IEDriverServer](http://selenium-release.storage.googleapis.com/index.html) (Windows only), [geckodriver](https://github.com/mozilla/geckodriver/releases), [chromedriver](https://chromedriver.storage.googleapis.com/index.html).
 
@@ -225,6 +225,14 @@ Save the element with the name *Value*, in order to be found by locator *saved*.
 
 ## Usage - HTTP Engine
 
+### Config
+
+***BASEURL***
+
+*BASEURL* is the base URL for *Value* without base URL, and the default URL for null *Value*
+
+*TIMEOUT* is the default timeout for all requests.
+
 ### Case - Encapsulator
 
 ***\<headers\>, \</headers\>***
@@ -243,7 +251,7 @@ Normal parameters.
 
 ***get, post, head, put, delete, options***
 
-Send HTTP requests with parameters..
+Send HTTP requests with parameters to the *Value* URL.
 
 ## Usage - Shell Engine
 

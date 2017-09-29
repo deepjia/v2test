@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import requests
+import logging
+from urllib.parse import urljoin
 from Engines.config import *
 
 
 class Test:
     def __init__(self):
         self.kw = {}
+        self.locator('timeout',CONFIG.get('HTTP', 'TIMEOUT'))
         self.kw_dict = {}
 
     # encapsulate params
@@ -49,8 +52,8 @@ class Test:
 
     # all requests
     def action(self, action, url):
-        if url == '':
-            url = CONFIG.get('HTTP', 'URL')
+        if '://' not in url:
+            url=urljoin(CONFIG.get('HTTP', 'BASEURL'), url)
         r = getattr(requests, action)(url, **self.kw, **self.kw_dict)
         self.kw = {}
         return r
