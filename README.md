@@ -164,7 +164,7 @@ Test report will be generated in `Reports`.
 
 ### Config
 
-##### Safari
+***DRIVER=Safari***
 
 Since OS X El Capitan, [safaridriver](https://webkit.org/blog/6900/webdriver-support-in-safari-10/)(macOS only) is preinstalled.
 
@@ -174,13 +174,21 @@ Keep Develop > Allow Remote Automation checked.
 
 Set *DRIVER=Safari*, *BIT=64* in `config.ini`
 
-##### IE/Firefox/Chrome
+***DRIVER=Safari, Firefox, Chrome***
 
 Download [IEDriverServer](http://selenium-release.storage.googleapis.com/index.html) (Windows only), [geckodriver](https://github.com/mozilla/geckodriver/releases), [chromedriver](https://chromedriver.storage.googleapis.com/index.html).
 
 Unpack and put the executable file in  `Engines/.../`
 
 Set *DRIVER=IE or Firefox or Chrome*, *BIT=32 or 64* in `config.ini` (Depend on your browser)
+
+***URL***
+
+The default URL if *Value* of *Action=open* is null.
+
+***WAIT*** 
+
+Implicit waits, wait for *Value* seconds before before looking for elements.
 
 ### Case - Locator
 
@@ -216,7 +224,7 @@ Press Key *Value* of the keyboard.
 
 ***wait.element***
 
-Wait for the element to appear, up to *Value* seconds.
+Explicit waits, wait for the element to appear, up to *Value* seconds.
 
 ***save***
 
