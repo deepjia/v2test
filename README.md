@@ -61,6 +61,57 @@ V2Test engines here.
 #### Reports
 Test reports will be generated here.
 ## Usage - Framework
+### [Config] General
+*LOG_LEVEL=INFO or DEBUG or WARNING or ERROR*
+
+For most users, set *LOG_LEVEL=INFO*
+### [Case] General
+V2Test will scan `Cases` for all excel files, and load all cases with ***Run = y*** from all sheets.
+
+One line is one step; Cases will be run step by step, and each case can have more than one lines.
+
+***Run, Case ID, Case Name, Engine*** should and should only be in the 1st line.
+
+***Run***
+
+Whether or not the case will be run. Set to ***y*** or ***n*** for the 1st line of each case.
+
+(*Required* for each case)
+
+***Case ID, Case Name***
+
+As it is called.
+
+(*Required* for each case)
+
+***Engine***
+
+The engine for the case. 
+
+Engine ***ui, http, shell*** are now built in. Engine ***mysql*** is coming soon.
+
+(*Required* for each case)
+
+***Locator/Encapsulator*** and ***Value***
+
+Used to locate elements in web pages or encapsulate parameters.
+
+***Action*** and ***Value***
+
+Used to interact with engines (some with framework), which is also known as "keyword".
+
+### [Case] Action
+***equal.\*\****
+
+Check whether *Value* equals the returned.** value.
+
+***in.\*\****
+
+Check whether *Value* in the returned.** value.
+
+***!equal.\*\*, !in.\*\****
+
+"!" means not.
 (Coming soon...)
 
 Now you can refer to the examples in `Cases`, it is easy to understand how to create test cases.
@@ -94,7 +145,6 @@ Unpack and put the executable file in  `Engines/.../`
 Set *DRIVER=IE or Firefox or Chrome*, *BIT=32 or 64* in `config.ini` (Depend on your browser)
 
 ### [Case] Locator
-Locator is used to find elements in web pages.
 
 ***id, name, xpath, css_selector, class\_name, tag\_name, link\_text, partial\_link\_text***
 
@@ -105,7 +155,6 @@ Find elements by id, name, xpath etc.
 Find previously saved elements. (Saved by the ***save*** action.)
 
 ### [Case] Action
-Action is used to interact with engines, which is also known as "keyword".
 
 ***open***
 
@@ -135,17 +184,7 @@ Wait for the element to appear, up to *Value* seconds.
 
 Save the element with the name *Value*, in order to be found by locator ***saved***.
 
-***equal.\*\****
 
-Check whether *Value* equals the returned.** value.
-
-***in.\*\****
-
-Check whether *Value* in the returned.** value.
-
-***!equal.\*\*, !in.\*\****
-
-"!" means not.
 ## Usage - HTTP Engine
 Coming soon...
 ## Usage - Shell Engine
