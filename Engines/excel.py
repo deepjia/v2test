@@ -6,11 +6,13 @@ import openpyxl
 from openpyxl.styles import Border, Side
 from xlutils.copy import copy
 
+
 def check_excel_version(file):
     if file.endswith('.xlsx'):
         return 'XLSX'
     elif file.endswith('.xls'):
         return 'XLS'
+
 
 def load_cases(file):
     file_type = check_excel_version(file)
@@ -25,8 +27,8 @@ class XLSX:
         self.valid_rows = []
         self.file = file
         self.excel = openpyxl.load_workbook(self.file)
+        self.sheets = None
 
-    # def read_sheet(self):
     def read_sheet(self):
         self.sheets = self.excel.worksheets
         for sheet in self.sheets:
@@ -85,8 +87,8 @@ class XLS:
         self.file = file
         self.excel = xlrd.open_workbook(self.file, formatting_info=True)
         self.wb = copy(self.excel)
+        self.sheets = None
 
-    # def read_sheet(self):
     def read_sheet(self):
         self.sheets = self.excel.sheets()
         for i in self.sheets:

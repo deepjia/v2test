@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import requests
-import logging
 from urllib.parse import urljoin
 from Engines.config import *
 
@@ -9,11 +8,13 @@ from Engines.config import *
 class Test:
     def __init__(self):
         self.kw = {}
-        self.locator('timeout',CONFIG.get('HTTP', 'TIMEOUT'))
         self.kw_dict = {}
+        self.kw_temp = None
+        self.locator('timeout', CONFIG.get('HTTP', 'TIMEOUT'))
 
     # encapsulate params
-    def locator(self, key, value):
+    def locator(self, key, value, *args):
+        del args
         if key in ('<headers>', '<params>'):
             self.kw_temp = self.kw
             self.kw = {}
@@ -32,29 +33,15 @@ class Test:
                 value = {'True': True, 'False': False}[key]
             self.kw[key] = value
 
-    def get(self, url):
-        return self.action("get", url)
-
-    def post(self, url):
-        return self.action("post", url)
-
-    def head(self, url):
-        return self.action("head", url)
-
-    def put(self, url):
-        return self.action("put", url)
-
-    def delete(self, url):
-        return self.action("delete", url)
-
-    def options(self, url):
-        return self.action("options", url)
+    @staticmethod
+    def locator_log(locator, locator_value, action, action_value):
+        return locator + (' = ' if locator_value else '') + locator_value
 
     # all requests
-    def action(self, action, url):
-        if '://' not in url:
-            url=urljoin(CONFIG.get('HTTP', 'BASEURL'), url)
-        r = getattr(requests, action)(url, **self.kw, **self.kw_dict)
+    def action(self, action, action_value):
+        if '://' not in action_value:
+            action_value = urljoin(CONFIG.get('HTTP', 'BASEURL'), action_value)
+        r = getattr(requests, action)(action_value, **self.kw, **self.kw_dict)
         self.kw = {}
         return r
 

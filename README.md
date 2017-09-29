@@ -136,15 +136,23 @@ Used to interact with engines (some with framework), which is also known as "key
 
 ### Case - Action
 
-***equal.\*\****
+***wait***
+
+Wait for *value* seconds.
+
+***log\[.\*\*\]***
+
+Log the returned.** value.
+
+***equal\[.\*\*\]***
 
 Check whether *Value* equals the returned.** value.
 
-***in.\*\****
+***in\[.\*\*\]***
 
 Check whether *Value* in the returned.** value.
 
-***!equal.\*\*, !in.\*\****
+***!equal\[.\*\*\], !in\[.\*\*\]***
 
 "!" means not.
 (Coming soon...)
@@ -176,11 +184,11 @@ Set *DRIVER=Safari*, *BIT=64* in `config.ini`
 
 ***DRIVER=Safari, Firefox, Chrome***
 
-Download [IEDriverServer](http://selenium-release.storage.googleapis.com/index.html) (Windows only), [geckodriver](https://github.com/mozilla/geckodriver/releases), [chromedriver](https://chromedriver.storage.googleapis.com/index.html).
+Download [IEDriverServer](http://selenium-release.storage.googleapis.com/index.html) (Windows only), [geckodriver](https://github.com/mozilla/geckodriver/releases), [chromedriver](https://chromedriver.storage.googleapis.com/index.html), then unpack it and put the binary file in  `Engines/.../`
 
-Unpack and put the executable file in  `Engines/.../`
+(Current version of binary is already there, but an update is recommended)
 
-Set *DRIVER=IE or Firefox or Chrome*, *BIT=32 or 64* in `config.ini` (Depend on your browser)
+Set *DRIVER=IE or Firefox or Chrome*, *BIT=32 or 64* (depend on your browser) in `config.ini` 
 
 ***URL***
 
@@ -199,6 +207,10 @@ Find elements by id, name, xpath etc.
 ***saved***
 
 Find previously saved elements. (Saved by the *save* action.)
+
+***index, value, visible\_text***
+
+Find options by 
 
 ### Case - Action
 
@@ -222,7 +234,14 @@ Click the element.
 
 Press Key *Value* of the keyboard.
 
-***wait.element***
+***[de]select\[.Key]***
+
+Select/Deselect the option by *Key = Value*, *Key in ('value', 'visible_text', 'index')*
+
+
+Select/Deselect all when *Key* and *Value* are null.
+
+***waiting***
 
 Explicit waits, wait for the element to appear, up to *Value* seconds.
 

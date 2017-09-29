@@ -13,8 +13,13 @@ from Engines.config import *
 from Engines.excel import *
 
 
+COL_RUN_RESULT = 10
+COL_RUN_TIME = 11
+COL_RUN_ERROR = 12
+LEN_MSG = 500
+
 cases_all = []
-saved_elements={}
+saved_elements = {}
 check = {'equal': 'assertEqual', 'in': 'assertIn', '!equal': 'assertNotEqual', '!in': 'assertNotIn'}
 logging.basicConfig(level=getattr(logging, CONFIG.get('MAIN', 'LOG_LEVEL')),
                     format='%(asctime)s - %(levelname)s: %(message)s')
@@ -39,87 +44,70 @@ class RunTest(unittest.TestCase):
     @ddt.data(*cases_all)
     def test_Case(self, data):
         """[ {0[0][10]} | {0[0][11]} ] {0[0][1]}: {0[0][2]}"""
-        file, file_name, sheet_name, case_row, case_id, case_name, engine = [data[0][x] for x in (9,10,11,12,1,2,4)]
-        result = [(sheet_name, case_row, 11, str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))]
+        file, file_name, sheet_name, case_row, case_id, case_name, engine = [data[0][column] for column in
+                                                                             (9, 10, 11, 12, 1, 2, 4)]
+        result = [(sheet_name, case_row, COL_RUN_TIME, str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))]
         i = None
         try:
             # one data one case: data[line][column]
             self.run = getattr(Engines, engine.lower()).Test()
             logging.info('[Sheet] ' + file_name + ' | ' + sheet_name)
-            logging.info('[Case] ' + data[0][1] + ': ' + data[0][2])
+            logging.info('[Case] ' + case_id + ': ' + case_name)
             # read lines from data
             for i in range(0, len(data)):
-                locator, locator_value, action, action_value = \
-                    data[i][5], str(data[i][6]) if data[i][6] else '', \
-                    data[i][7], str(data[i][8]) if data[i][8] else ''
-
+                locator, locator_value, action, action_value = [str(data[i][column])
+                                                                if data[i][column] else '' for column in (5, 6, 7, 8)]
+                locator, action = locator.lower(), action.lower()
                 # locate elements or encapsulate params
                 if locator:
                     if locator == 'saved':
-                        logging.info('[Step] {Element.saved} ' + locator_value)
+                        logging.info('[Step] {Element} Saved = ' + locator_value)
                         locator, locator_value = saved_elements[locator_value]
-                    if action == 'wait.element':
-                        if not action_value:
-                            self.fail('This action need a value.')
-                            # raise ValueError('Need a value')
-                        logging.info('[Step] {Element} ' + locator + ' = ' + locator_value +
-                                     ' wait.element for | ' + action_value + ' s')
-
-                        self.run.locator_timeout(locator, locator_value, action_value)
-                    else:
-                        logging.info('[Step] {Element/Parameter} ' + locator + (' = ' if locator_value else '') + locator_value)
-                        self.run.locator(locator, locator_value)
+                    logging.info('[Step] {Element} ' +
+                                 self.run.locator_log(locator, locator_value, action, action_value))
+                    self.run.locator(locator, locator_value, action, action_value)
 
                 if action:
+                    action_list = action.split('.')
                     # actions by engine
-                    if action in ('click', 'close', 'open', 'type', 'press', 'get', 'post', 'cmd', 'file'):
+                    if action_list[0] in ('click', 'close', 'open', 'type', 'press', 'select', 'deselect',
+                                          'get', 'post', 'head', 'put', 'delete', 'options', 'cmd', 'file'):
                         logging.info('[Step] ' + action.title() + ' | ' + action_value)
-                        response = getattr(self.run, action)(action_value)
+                        response = self.run.action(action, action_value)
 
                     # actions by framework
+                    elif action_list[0] == 'log':
+                        message = response if action == 'log' else getattr(response, action_list[-1])
+                        logging.info('[Step] Response ' + ' = ' + str(message))
+
                     elif not action_value:
                         self.fail('This action need a value')
 
                     elif action == 'save':
-                        logging.info('[Step] Element ' + action.lower() + 'd to ' + action_value)
+                        logging.info('[Step] Element ' + 'saved to ' + action_value)
                         saved_elements[action_value] = (self.run.last_locator, self.run.last_locator_value)
 
                     elif action == 'wait':
                         logging.info('[Step] ' + action.title() + ' = ' + action_value)
                         time.sleep(int(action_value))
 
-                    elif action == 'log':
-                        logging.info('[Step] Response ' + ' = ' + str(response))
-
-                    elif action.lower().split('.')[0] == 'log':
-                        message = getattr(response, action.lower().split('.')[-1])
-                        logging.info('[Step] Response ' + ' = ' + str(message))
-
-                    # action check (response)
-                    elif action.lower() in check:
-                        logging.info('[Step] Check ' + action_value + ' ' + action.lower() + ' ' +
-                                     str(response).replace('\n', '')[0:500] + ' (Use log action to show more)')
-                        getattr(self, check[action.lower()])(action_value, response)
-
-                    # action check (response.attribute)
-                    elif action.lower().split('.')[0] in check:
-                        message = getattr(response, action.lower().split('.')[-1])
-                        message = str(message)
-                        logging.info('[Step] Check ' + action_value + ' ' + action.lower() + ' ' +
-                                     message.replace('\n', '')[0:500] + ' (Use log action to show more)')
-                        getattr(self, check[action.lower().split('.')[0]])(action_value, message)
+                    # action check
+                    elif action_list[0] in check:
+                        message = str(response if len(action_list) == 1 else getattr(response, action_list[-1]))
+                        logging.info('[Step] Check ' + action_value + ' ' + action + ' ' +
+                                     message.replace('\n', '')[0:LEN_MSG] + ' (Use log action to show more)')
+                        getattr(self, check[action_list[0]])(action_value, message)
 
         except Exception as e:
-            # File, sheet, row, column, value
             i = str(i + 1 if i else i)
             self.e = '[Line ' + i + '] ' + str(e)
-            result.append((sheet_name, case_row, 10, 'fail'))
+            result.append((sheet_name, case_row, COL_RUN_RESULT, 'fail'))
             raise
         else:
             self.e = ''
-            result.append((sheet_name, case_row, 10, 'pass'))
+            result.append((sheet_name, case_row, COL_RUN_RESULT, 'pass'))
         finally:
-            result.append((sheet_name, case_row, 12, self.e))
+            result.append((sheet_name, case_row, COL_RUN_ERROR, self.e))
             write_results(file, result)
 
     def tearDown(self):
