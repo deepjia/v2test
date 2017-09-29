@@ -26,7 +26,8 @@ selenium requests xlrd xlwt ddt html-testRunner
 
 ## Installation
 
-Install Git and Python 3. Homrebrew is recommended for macOS.
+Install Git and Python 3. Homebrew is recommended for macOS.
+
 Then, clone the repo:
 
 ```
@@ -91,19 +92,19 @@ pip install -r requirements.txt
 
 ## Usage - Framework
 
-### [Config] General
+### Config
 
 *LOG_LEVEL=INFO or DEBUG or WARNING or ERROR*
 
 For most users, set *LOG_LEVEL=INFO*
 
-### [Case] General
+### Case
 
-V2Test will scan `Cases` for all excel files, and load all cases with ***Run = y*** from all sheets.
+V2Test will scan `Cases` for all excel files, and load all cases with *Run = y* from all sheets.
 
 One line is one step; Cases will be run step by step, and each case can have more than one lines.
 
-***Run, Case ID, Case Name, Engine*** should and should only be in the 1st line.
+*Run, Case ID, Case Name, Engine* should and should only be in the 1st line.
 
 ***Run***
 
@@ -121,7 +122,7 @@ As it is called.
 
 The engine for the case. 
 
-Engine ***ui, http, shell*** are now built in. Engine ***mysql*** is coming soon.
+Engine *ui, http, shell* are now built in. Engine *mysql* is coming soon.
 
 (*Required* for each case)
 
@@ -133,7 +134,7 @@ Used to locate elements in web pages or encapsulate parameters.
 
 Used to interact with engines (some with framework), which is also known as "keyword".
 
-### [Case] Action
+### Case - Action
 
 ***equal.\*\****
 
@@ -161,7 +162,7 @@ Test report will be generated in `Reports`.
 
 ## Usage - UI Engine
 
-### [Config] Driver
+### Config
 
 #### Safari Driver (macOS only):
 
@@ -181,7 +182,7 @@ Unpack and put the executable file in  `Engines/.../`
 
 Set *DRIVER=IE or Firefox or Chrome*, *BIT=32 or 64* in `config.ini` (Depend on your browser)
 
-### [Case] Locator
+### Case - Locator
 
 ***id, name, xpath, css_selector, class\_name, tag\_name, link\_text, partial\_link\_text***
 
@@ -189,9 +190,9 @@ Find elements by id, name, xpath etc.
 
 ***saved***
 
-Find previously saved elements. (Saved by the ***save*** action.)
+Find previously saved elements. (Saved by the *save* action.)
 
-### [Case] Action
+### Case - Action
 
 ***open***
 
@@ -219,34 +220,34 @@ Wait for the element to appear, up to *Value* seconds.
 
 ***save***
 
-Save the element with the name *Value*, in order to be found by locator
-
-***saved***.
+Save the element with the name *Value*, in order to be found by locator *saved*.
 
 
 ## Usage - HTTP Engine
 
-### [Case] Encapsulator
+### Case - Encapsulator
 
 ***\<headers\>, \</headers\>***
 
-All ***Encapsulator: Value*** between ***\<headers\>*** and ***\</headers\>*** will be encapsulator to ***headers={Encapsulator1: Value1, Encapsulator2: Value2, ...}***, and headers will be the parameter.
+All *Encapsulator: Value* between *\<headers\>* and *\</headers\>* will be encapsulator to *headers={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and headers will be the parameter.
 
 ***\<params\>, \</params\>***
 
-All ***Encapsulator: Value*** between ***\<params\>*** and ***\</params\>*** will be encapsulator to ***params={Encapsulator1: Value1, Encapsulator2: Value2, ...}***, and params will be the parameter.
+All *Encapsulator: Value* between *\<params\>* and *\</params\>* will be encapsulator to *params={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and params will be the parameter.
 
 ***params, headers, timeout, ...***
 
 Normal parameters.
 
-### [Case] Action
+### Case - Action
 
 ***get, post, head, put, delete, options***
 
-Send HTTP requests.
+Send HTTP requests with parameters..
 
 ## Usage - Shell Engine
+
+### Case - Action
 
 ***cmd***
 
