@@ -56,7 +56,7 @@ pip install -r requirements.txt
 
 ```
 .
-├── Cases: Case files, xlsx recommended.
+├── Cases: Case files(xlsx).
 │   └── Example.xlsx: Example for case file.
 ├── Engines: V2Test engines.
 │   ├── __init__.py
@@ -291,3 +291,7 @@ Run shell command.
 ***file***
 
 Run shell script.
+## Snapshot
+![case](https://user-images.githubusercontent.com/1452602/31042295-3eac8c94-a56a-11e7-9f1f-d28d6ca45782.png)
+![report](https://user-images.githubusercontent.com/1452602/31042298-425799d8-a56a-11e7-80a4-96e922477a5f.png)
+![run](https://user-images.githubusercontent.com/1452602/31042321-de28731e-a56a-11e7-9cc6-97011b86624b.png)

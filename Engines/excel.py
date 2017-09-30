@@ -1,35 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
-import xlrd
 import openpyxl
 from openpyxl.styles import Border, Side
-from xlutils.copy import copy
 
 
-def check_excel_version(file):
-    if file.endswith('.xlsx'):
-        return 'XLSX'
-    elif file.endswith('.xls'):
-        return 'XLS'
+def write_excel(file, result):
+    excel = openpyxl.load_workbook(file)
+    for sheet, row, column, value in result:
+        excel.get_sheet_by_name(sheet).cell(row=row, column=column).value = value
+    excel.save(file)
 
 
-def load_cases(file):
-    file_type = check_excel_version(file)
-    excel = eval(file_type)(file)
-    excel.read_sheet()
-    return excel.cases
-
-
-class XLSX:
+class ReadAndFormatExcel:
     def __init__(self, file):
         self.cases = []
         self.valid_rows = []
         self.file = file
         self.excel = openpyxl.load_workbook(self.file)
-        self.sheets = None
-
-    def read_sheet(self):
         self.sheets = self.excel.worksheets
         for sheet in self.sheets:
             self.read_line(sheet)
@@ -68,63 +56,3 @@ class XLSX:
             if i == sheet.max_row or sheet.cell(row=i + 1, column=2).value:
                 self.cases.append(self.valid_rows)
                 self.valid_rows = []
-
-    def write_cell(self, sheet, row, column, value):
-        self.excel.get_sheet_by_name(sheet).cell(row=row, column=column).value = value
-        self.excel.save(self.file)
-
-    def write_cells(self, results):
-        for sheet, row, column, value in results:
-            self.excel.get_sheet_by_name(sheet).cell(row=row, column=column).value = value
-        self.excel.save(self.file)
-
-
-# deprecated
-class XLS:
-    def __init__(self, file):
-        self.cases = []
-        self.valid_rows = []
-        self.file = file
-        self.excel = xlrd.open_workbook(self.file, formatting_info=True)
-        self.wb = copy(self.excel)
-        self.sheets = None
-
-    def read_sheet(self):
-        self.sheets = self.excel.sheets()
-        for i in self.sheets:
-            self.read_line(i)
-
-    def read_line(self, sheet):
-        run_flag = None
-        for i in range(1, sheet.nrows):
-            case_id = sheet.cell(i, 1).value
-
-            if case_id:
-                # Y, new case
-                if sheet.cell(i, 0).value.lower() == 'y':
-                    run_flag = 1
-                # Ignore N
-                else:
-                    run_flag = 0
-                    continue
-            # Ignore blank lines without run_flag 1
-            elif run_flag == 0:
-                continue
-
-            self.valid_rows.append([sheet.cell(i, x).value for x in range(0, 9)])
-            self.valid_rows[-1].extend((self.file, os.path.basename(self.file), sheet.name, i))
-
-            if i == sheet.nrows - 1 or sheet.cell(i + 1, 1).value:
-                self.cases.append(self.valid_rows)
-                self.valid_rows = []
-
-        def write_cell(self, sheet, row, column, value):
-            sheet_index = self.excel.sheet_names().index(sheet)
-            self.wb.get_sheet(sheet_index).write(row, column - 1, value)
-            self.wb.save(self.file)
-
-        def write_cells(self, results):
-            for sheet, row, column, value in results:
-                sheet_index = self.excel.sheet_names().index(sheet)
-                self.wb.get_sheet(sheet_index).write(row, column - 1, value)
-            self.wb.save(self.file)

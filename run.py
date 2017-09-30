@@ -18,21 +18,12 @@ COL_RUN_TIME = 11
 COL_RUN_ERROR = 12
 LEN_MSG = 500
 
-cases_all = []
 saved_elements = {}
 check = {'equal': 'assertEqual', 'in': 'assertIn', '!equal': 'assertNotEqual', '!in': 'assertNotIn'}
 logging.basicConfig(level=getattr(logging, CONFIG.get('MAIN', 'LOG_LEVEL')),
                     format='%(asctime)s - %(levelname)s: %(message)s')
-print('Loading cases...\n' + '-' * 70)
-for x in CASE_FILES:
-    logging.info(x)
-    cases_all += load_cases(x)
-
-
-def write_results(file, results):
-    file_type = check_excel_version(file)
-    excel = eval(file_type)(file)
-    excel.write_cells(results)
+print('Loading cases...\n' + '-' * 70 + '\n', *CASE_FILES)
+cases_all = (case for file in CASE_FILES for case in ReadAndFormatExcel(file).cases)
 
 
 @ddt.ddt
@@ -108,7 +99,7 @@ class RunTest(unittest.TestCase):
             result.append((sheet_name, case_row, COL_RUN_RESULT, 'pass'))
         finally:
             result.append((sheet_name, case_row, COL_RUN_ERROR, self.e))
-            write_results(file, result)
+            write_excel(file, result)
 
     def tearDown(self):
         """Do some cleaning"""
