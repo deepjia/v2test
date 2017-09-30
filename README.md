@@ -15,8 +15,11 @@ It's easy to develop new engines.
 To do:
 
 * MySQL Engine. (Coming later...)
-* More actions for UI Engine.
 * Remote mode. 
+
+![case](https://user-images.githubusercontent.com/1452602/31042295-3eac8c94-a56a-11e7-9f1f-d28d6ca45782.png)
+![report](https://user-images.githubusercontent.com/1452602/31042298-425799d8-a56a-11e7-80a4-96e922477a5f.png)
+![run](https://user-images.githubusercontent.com/1452602/31042321-de28731e-a56a-11e7-9cc6-97011b86624b.png)
 
 ## Prerequisites
 
@@ -291,7 +294,3 @@ Run shell command.
 ***file***
 
 Run shell script.
-## Snapshot
-![case](https://user-images.githubusercontent.com/1452602/31042295-3eac8c94-a56a-11e7-9f1f-d28d6ca45782.png)
-![report](https://user-images.githubusercontent.com/1452602/31042298-425799d8-a56a-11e7-80a4-96e922477a5f.png)
-![run](https://user-images.githubusercontent.com/1452602/31042321-de28731e-a56a-11e7-9cc6-97011b86624b.png)
