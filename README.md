@@ -9,12 +9,13 @@ Engines:
 * [UI] Selenium browser automation test.
 * [HTTP] Requests HTTP interface test.
 * [Shell] Shell command/script test.
+* [MySQL] MySQL database test.
 
 It's easy to develop new engines.
 
 To do:
 
-* MySQL Engine. (Coming later...)
+* More action for MySQL Engine.
 * Remote mode. 
 
 ![case](https://user-images.githubusercontent.com/1452602/31042295-3eac8c94-a56a-11e7-9f1f-d28d6ca45782.png)
@@ -294,3 +295,33 @@ Run shell command.
 ***file***
 
 Run shell script.
+
+## Usage - MySQL Engine
+
+### Config
+
+***HOST, HOST, USERNAME, PASSWORD, DATABASE, CHARSET***
+
+Basic info of MySQL database.
+
+### Case - Action
+
+***sql***
+
+Run SQL Query.
+
+***commit***
+
+Run SQL Query and commit.
+
+***fetchone***
+
+Run SQL Query and fetch one record.
+
+***fetchall***
+
+Run SQL Query and fetch one records.
+
+***fetch\[.\*]***
+
+Run SQL Query and fetch * records.

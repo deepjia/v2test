@@ -8,6 +8,7 @@ import HtmlTestRunner
 import Engines.ui
 import Engines.http
 import Engines.shell
+import Engines.mysql
 from datetime import datetime
 from Engines.config import *
 from Engines.excel import *
@@ -62,7 +63,8 @@ class RunTest(unittest.TestCase):
                     action_list = action.split('.')
                     # actions by engine
                     if action_list[0] in ('click', 'close', 'open', 'type', 'press', 'select', 'deselect',
-                                          'get', 'post', 'head', 'put', 'delete', 'options', 'cmd', 'file'):
+                                          'get', 'post', 'head', 'put', 'delete', 'options', 'cmd', 'file',
+                                          'fetchone', 'fetchall', 'fetchmany'):
                         logging.info('[Step] ' + action.title() + ' | ' + action_value)
                         response = self.run.action(action, action_value)
 
@@ -86,7 +88,7 @@ class RunTest(unittest.TestCase):
                     elif action_list[0] in check:
                         message = str(response if len(action_list) == 1 else getattr(response, action_list[-1]))
                         logging.info('[Step] Check ' + action_value + ' ' + action + ' ' +
-                                     message.replace('\n', '')[0:LEN_MSG] + ' (Use log action to show more)')
+                                     message.replace('\n', '')[0:LEN_MSG] + ' /* Use log action to show more */')
                         getattr(self, check[action_list[0]])(action_value, message)
 
         except Exception as e:
