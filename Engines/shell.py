@@ -9,14 +9,10 @@ class Test:
         pass
 
     @staticmethod
-    def cmd(command):
-        r = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE)
-        return r.stdout.decode('utf-8')
-
-    @staticmethod
-    def file(filename):
-        filename = os.path.join(FILE_DIR, filename)
-        r = subprocess.run(filename, shell=True, check=True, stdout=subprocess.PIPE)
+    def action(action, action_value):
+        if action == 'file':
+            action_value = os.path.join(FILE_DIR, action_value)
+        r = subprocess.run(action_value, shell=True, check=True, stdout=subprocess.PIPE)
         return r.stdout.decode('utf-8')
 
     @staticmethod

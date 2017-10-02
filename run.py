@@ -93,7 +93,7 @@ class RunTest(unittest.TestCase):
             i = str(i + 1 if i else i)
             self.e = '[Line ' + i + '] ' + str(e)
             result.append((sheet_name, case_row, COL_RUN_RESULT, 'fail'))
-            raise
+            #raise
         else:
             self.e = ''
             result.append((sheet_name, case_row, COL_RUN_RESULT, 'pass'))

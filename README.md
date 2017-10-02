@@ -25,7 +25,7 @@ To do:
 
 Python3 with modules:
 
-selenium requests xlrd xlwt ddt html-testRunner
+openpyxl ddt html-testRunner selenium requests PyMySQL
 
 ## Installation
 
