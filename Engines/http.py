@@ -37,8 +37,7 @@ class Test:
     def locator_log(locator, locator_value, action, action_value):
         return locator + (' = ' if locator_value else '') + locator_value
 
-    # all requests
-    def action(self, action, action_value):
+    def action(self, action_value, action):
         if '://' not in action_value:
             action_value = urljoin(CONFIG.get('HTTP', 'BASEURL'), action_value)
         r = getattr(requests, action)(action_value, **self.kw, **self.kw_dict)

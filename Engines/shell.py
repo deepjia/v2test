@@ -9,9 +9,11 @@ class Test:
         pass
 
     @staticmethod
-    def action(action, action_value):
+    def action(action_value, action):
         if action == 'file':
             action_value = os.path.join(FILE_DIR, action_value)
+        elif action != 'cmd':
+            raise ValueError('Invalid Action.')
         r = subprocess.run(action_value, shell=True, check=True, stdout=subprocess.PIPE)
         return r.stdout.decode('utf-8')
 

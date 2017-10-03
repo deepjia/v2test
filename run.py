@@ -17,7 +17,7 @@ from Engines.excel import *
 COL_RUN_RESULT = 10
 COL_RUN_TIME = 11
 COL_RUN_ERROR = 12
-LEN_MSG = 500
+LEN_MSG = int(CONFIG.get('MAIN','LEN_MSG'))
 
 saved_elements = {}
 check = {'equal': 'assertEqual', 'in': 'assertIn', '!equal': 'assertNotEqual', '!in': 'assertNotIn'}
@@ -61,35 +61,36 @@ class RunTest(unittest.TestCase):
 
                 if action:
                     action_list = action.split('.')
-                    # actions by engine
-                    if action_list[0] in ('click', 'close', 'open', 'type', 'press', 'select', 'deselect',
-                                          'get', 'post', 'head', 'put', 'delete', 'options', 'cmd', 'file',
-                                          'fetchone', 'fetchall', 'fetchmany'):
-                        logging.info('[Step] ' + action.title() + ' | ' + action_value)
-                        response = self.run.action(action, action_value)
 
                     # actions by framework
-                    elif action_list[0] == 'log':
+                    if action_list[0] == 'log':
                         message = response if action == 'log' else getattr(response, action_list[-1])
                         logging.info('[Step] Response ' + ' = ' + str(message))
 
-                    elif not action_value:
-                        self.fail('This action need a value')
-
                     elif action == 'save':
+                        if not action_value:
+                            self.fail('This action need a value')
                         logging.info('[Step] Element ' + 'saved to ' + action_value)
                         saved_elements[action_value] = (self.run.last_locator, self.run.last_locator_value)
 
                     elif action == 'wait':
+                        if not action_value:
+                            self.fail('This action need a value')
                         logging.info('[Step] ' + action.title() + ' = ' + action_value)
                         time.sleep(int(action_value))
 
-                    # action check
                     elif action_list[0] in check:
+                        if not action_value:
+                            self.fail('This action need a value')
                         message = str(response if len(action_list) == 1 else getattr(response, action_list[-1]))
                         logging.info('[Step] Check ' + action_value + ' ' + action + ' ' +
                                      message.replace('\n', '')[0:LEN_MSG] + ' /* Use log action to show more */')
                         getattr(self, check[action_list[0]])(action_value, message)
+
+                    # actions by engine
+                    else:
+                        logging.info('[Step] ' + action.title() + ' | ' + action_value)
+                        response = self.run.action(action_value, *action_list)
 
         except Exception as e:
             i = str(i + 1 if i else i)

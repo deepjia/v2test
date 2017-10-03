@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import pymysql.cursors
 from Engines.config import *
-import logging
 
 
 class Test:
@@ -15,7 +14,7 @@ class Test:
                                           charset=CONFIG.get('MYSQL', 'CHARSET'),
                                           cursorclass=pymysql.cursors.DictCursor)
 
-    def action(self, action, action_value):
+    def action(self, action_value, action, *action_sub):
         with self.connection.cursor() as cursor:
             if not action_value:
                 raise ValueError('This action need a value.')
@@ -26,8 +25,11 @@ class Test:
                 return cursor.fetchone()
             elif action == 'fetchall':
                 return cursor.fetchall()
-            elif action.split('.')[0] == 'fetchmany':
-                return cursor.fetchmany(int(action.split('.')[-1]))
+            elif action == 'fetchmany':
+                result = cursor.fetchmany(int(action_sub[0]))
+                if len(action_sub) == 2:
+                    result = result[action_sub[-1]]
+                return result
 
     def clean(self):
         self.connection.close()

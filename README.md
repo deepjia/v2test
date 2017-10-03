@@ -240,7 +240,7 @@ Press Key *Value* of the keyboard.
 
 ***[de]select\[.Key]***
 
-Select/Deselect the option by *Key = Value*, *Key in ('value', 'visible_text', 'index')*
+Select/Deselect the option by *Key in ('value', 'visible_text', 'index')*
 
 
 Select/Deselect all when *Key* and *Value* are null.

@@ -58,7 +58,7 @@ class Test:
         else:
             return locator_log
 
-    def action(self, action, action_value):
+    def action(self, action_value, action, *action_sub):
         # Action waiting is processed when locating
         if action == 'open':
             self.driver = driver_func()
@@ -84,16 +84,15 @@ class Test:
             self.elem.clear()
             return self.elem.send_keys(getattr(Keys, action_value))
 
-        elif 'select' in action:
+        elif action in ('select','deselect'):
             self.select = Select(self.elem)
-            if action_value:
-                if action in ('select', 'deselect'):
-                    action = action + '_visible_text'
-                else:
-                    action = action.split('.')[0] + '_by_' + action.split('.')[-1]
-                return getattr(self.select, action)(action_value)
-            else:
+            if not action_value:
                 return getattr(self.select, action + '_all')()
+            if action_sub:
+                action = action + '_by_' + action_sub[0]
+            else:
+                action = action + '_visible_text'
+            return getattr(self.select, action)(action_value)
 
     def clean(self):
         if driver != 'Safari':
