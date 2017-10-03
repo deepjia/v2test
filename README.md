@@ -300,7 +300,7 @@ Run shell script.
 
 ### Config
 
-***HOST, HOST, USERNAME, PASSWORD, DATABASE, CHARSET***
+***HOST, USERNAME, PASSWORD, DATABASE, CHARSET***
 
 Basic info of MySQL database.
 
@@ -318,7 +318,7 @@ Run SQL Query and commit.
 
 Run SQL Query and fetch one record, or fetch the value of key * from the record.
 
-***fetchall***
+***fetchall.\****
 
 Run SQL Query and fetch one records.
 

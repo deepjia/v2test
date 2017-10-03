@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import pymysql.cursors
+import re
 from Engines.config import *
 
 
@@ -20,15 +21,19 @@ class Test:
                 raise ValueError('This action need a value.')
             cursor.execute(action_value)
             if action == 'commit':
-                self.connection.commit()
+                return self.connection.commit()
             elif action == 'fetchall':
                 return cursor.fetchall()
             elif action == 'fetchmany':
-                return cursor.fetchmany(int(action_sub[0]))
+                if action_sub:
+                    number = int(action_sub[0])
+                else:
+                    number = int(CONFIG.get('MYSQL','FETCH_NUM'))
+                return cursor.fetchmany(number)
             elif action == 'fetchone':
                 result = cursor.fetchone()
-                if len(action_sub) == 2:
-                    result = result[action_sub[1]]
+                if action_sub:
+                    result = result[action_sub[0]]
                 return result
 
     def clean(self):
