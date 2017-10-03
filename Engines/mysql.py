@@ -21,14 +21,14 @@ class Test:
             cursor.execute(action_value)
             if action == 'commit':
                 self.connection.commit()
-            elif action == 'fetchone':
-                return cursor.fetchone()
             elif action == 'fetchall':
                 return cursor.fetchall()
             elif action == 'fetchmany':
-                result = cursor.fetchmany(int(action_sub[0]))
+                return cursor.fetchmany(int(action_sub[0]))
+            elif action == 'fetchone':
+                result = cursor.fetchone()
                 if len(action_sub) == 2:
-                    result = result[action_sub[-1]]
+                    result = result[action_sub[1]]
                 return result
 
     def clean(self):

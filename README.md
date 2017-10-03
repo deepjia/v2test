@@ -314,14 +314,14 @@ Run SQL Query.
 
 Run SQL Query and commit.
 
-***fetchone***
+***fetchone.\[\*]***
 
-Run SQL Query and fetch one record.
+Run SQL Query and fetch one record, or fetch the value of key * from the record.
 
 ***fetchall***
 
 Run SQL Query and fetch one records.
 
-***fetchmany\[.\*]***
+***fetchmany.\****
 
 Run SQL Query and fetch as many as * records.
