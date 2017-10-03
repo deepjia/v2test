@@ -322,6 +322,6 @@ Run SQL Query and fetch one record.
 
 Run SQL Query and fetch one records.
 
-***fetch\[.\*]***
+***fetchmany\[.\*]***
 
-Run SQL Query and fetch * records.
+Run SQL Query and fetch as many as * records.
