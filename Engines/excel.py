@@ -8,7 +8,7 @@ from openpyxl.styles import Border, Side
 def write_excel(file, result):
     excel = openpyxl.load_workbook(file)
     for sheet, row, column, value in result:
-        excel.get_sheet_by_name(sheet).cell(row=row, column=column).value = value
+        excel[sheet].cell(row=row, column=column).value = value
     excel.save(file)
 
 
