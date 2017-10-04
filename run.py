@@ -23,8 +23,9 @@ saved_elements = {}
 check = {'equal': 'assertEqual', 'in': 'assertIn', '!equal': 'assertNotEqual', '!in': 'assertNotIn'}
 logging.basicConfig(level=getattr(logging, CONFIG.get('MAIN', 'LOG_LEVEL')),
                     format='%(asctime)s - %(levelname)s: %(message)s')
-print('Loading cases...\n' + '-' * 70 + '\n', *CASE_FILES)
-cases_all = (case for file in CASE_FILES for case in ReadAndFormatExcel(file).cases)
+print('Loading cases...\n' + '-' * 70)
+print('\n'.join(CASE_FILES))
+cases_all = [case for file in CASE_FILES for case in ReadAndFormatExcel(file).cases]
 
 
 @ddt
