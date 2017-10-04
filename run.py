@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import time
 import unittest
-import ddt
 import logging
 import HtmlTestRunner
 import Engines.ui
@@ -12,12 +11,13 @@ import Engines.mysql
 from datetime import datetime
 from Engines.config import *
 from Engines.excel import *
+from Engines.ddt import *
 
 
 COL_RUN_RESULT = 10
 COL_RUN_TIME = 11
 COL_RUN_ERROR = 12
-LEN_MSG = int(CONFIG.get('MAIN','LEN_MSG'))
+LEN_MSG = int(CONFIG.get('MAIN', 'LEN_MSG'))
 
 saved_elements = {}
 check = {'equal': 'assertEqual', 'in': 'assertIn', '!equal': 'assertNotEqual', '!in': 'assertNotIn'}
@@ -27,28 +27,28 @@ print('Loading cases...\n' + '-' * 70 + '\n', *CASE_FILES)
 cases_all = (case for file in CASE_FILES for case in ReadAndFormatExcel(file).cases)
 
 
-@ddt.ddt
+@ddt
 class RunTest(unittest.TestCase):
     def setUp(self):
         """Init Case"""
-        logging.info('')
 
-    @ddt.data(*cases_all)
-    def test_Case(self, data):
+    @idata(cases_all)
+    def test_Case(self, case):
         """[ {0[0][10]} | {0[0][11]} ] {0[0][1]}: {0[0][2]}"""
-        file, file_name, sheet_name, case_row, case_id, case_name, engine = [data[0][column] for column in
+        logging.info("")
+        file, file_name, sheet_name, case_row, case_id, case_name, engine = [case[0][column] for column in
                                                                              (9, 10, 11, 12, 1, 2, 4)]
         result = [(sheet_name, case_row, COL_RUN_TIME, str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))]
         i = None
         try:
-            # one data one case: data[line][column]
+            # one case: case[line][column]
             self.run = getattr(Engines, engine.lower()).Test()
             logging.info('[Sheet] ' + file_name + ' | ' + sheet_name)
             logging.info('[Case] ' + case_id + ': ' + case_name)
-            # read lines from data
-            for i in range(0, len(data)):
-                locator, locator_value, action, action_value = [str(data[i][column])
-                                                                if data[i][column] else '' for column in (5, 6, 7, 8)]
+            # read lines from case
+            for i in range(0, len(case)):
+                locator, locator_value, action, action_value = [str(case[i][column])
+                                                                if case[i][column] else '' for column in (5, 6, 7, 8)]
                 locator, action = locator.lower(), action.lower()
                 # locate elements or encapsulate params
                 if locator:
@@ -96,7 +96,7 @@ class RunTest(unittest.TestCase):
             i = str(i + 1 if i else i)
             self.e = '[Line ' + i + '] ' + str(e)
             result.append((sheet_name, case_row, COL_RUN_RESULT, 'fail'))
-            #raise
+            # raise
         else:
             self.e = ''
             result.append((sheet_name, case_row, COL_RUN_RESULT, 'pass'))
