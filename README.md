@@ -1,5 +1,7 @@
 # V2Test
 
+[![Build Status](https://travis-ci.org/deepjia/v2test.svg?branch=master)](https://travis-ci.org/deepjia/v2test)
+
 ## Introduction
 
 V2Test is a lightweight data driven testing framework based on Python 3.
