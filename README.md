@@ -184,15 +184,23 @@ Keep Safari > Preferences > Show Develop checked.
 
 Keep Develop > Allow Remote Automation checked.
 
-Set *DRIVER=Safari*, *BIT=64* in `config.ini`
+Set *DRIVER=Safari* in `config.ini`
 
-***DRIVER=Safari, Firefox, Chrome***
+***DRIVER=IE, Firefox, Chrome***
 
 Download [IEDriverServer](http://selenium-release.storage.googleapis.com/index.html) (Windows only), [geckodriver](https://github.com/mozilla/geckodriver/releases), [chromedriver](https://chromedriver.storage.googleapis.com/index.html), then unpack it and put the binary file in  `Engines/.../`
 
 (Current version of binary is already there, but an update is recommended)
 
 Set *DRIVER=IE or Firefox or Chrome*, *BIT=32 or 64* (depend on your browser) in `config.ini` 
+
+***DRIVER=Remote***
+
+(Untested)
+
+Make sure [Standalone Selenium Server](http://www.seleniumhq.org/docs/03_webdriver.jsp#running-standalone-selenium-server-for-use-with-remotedrivers) is running.
+
+Set *DRIVER=Remote, REMOTE\_SERVER=(url), REMOTE\_BROWSER=Chrome or Firefox or Safari* in `config.ini` 
 
 ***URL***
 

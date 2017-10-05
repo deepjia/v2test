@@ -7,21 +7,26 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from Engines.config import *
 
 
-platform_os = platform.system()
-ext = ('.exe' if platform_os == 'Windows' else '')
-os_type = {'Darwin': 'mac', 'Linux': 'linux', 'Windows': 'win'}[platform_os] + CONFIG.get('UI', 'BIT')
 driver = CONFIG.get('UI', 'DRIVER').title()
 
 
 def driver_func():
     if driver == 'Safari':
         return webdriver.Safari()
+    elif driver == 'Remote':
+        return webdriver.Remote(
+            command_executor=CONFIG.get('UI', 'REMOTE_SERVER'),
+            desired_capabilities=getattr(DesiredCapabilities, CONFIG.get('UI', 'REMOTE_BROWSER').upper()))
     else:
+        platform_os = platform.system()
+        os_type = {'Darwin': 'mac', 'Linux': 'linux', 'Windows': 'win'}[platform_os] + CONFIG.get('UI', 'BIT')
         driver_file = '.exe' if platform_os == 'Windows' else ''
-        driver_file = {'Firefox': 'geckodriver', 'Chrome': 'chromedriver', 'Ie': 'IEDriverServer'}[driver] + driver_file
+        driver_file = {'Firefox': 'geckodriver', 'Chrome': 'chromedriver', 'Ie': 'IEDriverServer'}[
+                          driver] + driver_file
         driver_file = os.path.join(ENGINE_DIR, os_type, driver_file)
         if driver == 'Ie':
             return webdriver.Ie(driver_file)
@@ -84,7 +89,7 @@ class Test:
             self.elem.clear()
             return self.elem.send_keys(getattr(Keys, action_value))
 
-        elif action in ('select','deselect'):
+        elif action in ('select', 'deselect'):
             self.select = Select(self.elem)
             if not action_value:
                 return getattr(self.select, action + '_all')()
