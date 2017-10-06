@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import pymysql.cursors
-import re
-from Engines.config import *
+from TestEngines.config import *
 
 
 class Test:
@@ -28,7 +27,7 @@ class Test:
                 if action_sub:
                     number = int(action_sub[0])
                 else:
-                    number = int(CONFIG.get('MYSQL','FETCH_NUM'))
+                    number = int(CONFIG.get('MYSQL', 'FETCH_NUM'))
                 return cursor.fetchmany(number)
             elif action == 'fetchone':
                 result = cursor.fetchone()

@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from Engines.config import *
+from TestEngines.config import *
 
 
 driver = CONFIG.get('UI', 'DRIVER').title()

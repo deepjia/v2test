@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import requests
 from urllib.parse import urljoin
-from Engines.config import *
+from TestEngines.config import *
 
 
 class Test:

@@ -4,14 +4,14 @@ import time
 import unittest
 import logging
 import HtmlTestRunner
-import Engines.ui
-import Engines.http
-import Engines.shell
-import Engines.mysql
+import TestEngines.ui
+import TestEngines.http
+import TestEngines.shell
+import TestEngines.mysql
 from datetime import datetime
-from Engines.config import *
-from Engines.excel import *
-from Engines.ddt import *
+from TestEngines.config import *
+from TestEngines.excel import *
+from TestEngines.ddt import *
 
 
 COL_RUN_RESULT = 10
@@ -43,7 +43,7 @@ class RunTest(unittest.TestCase):
         i = None
         try:
             # one case: case[line][column]
-            self.run = getattr(Engines, engine.lower()).Test()
+            self.run = getattr(TestEngines, engine.lower()).Test()
             logging.info('[Sheet] ' + file_name + ' | ' + sheet_name)
             logging.info('[Case] ' + case_id + ': ' + case_name)
             # read lines from case
