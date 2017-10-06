@@ -39,20 +39,19 @@ Then, clone the repo:
 ```
 git clone https://github.com/deepjia/v2test.git
 ```
-For macOS, I recommend pip3 with `--user` so that `sudo` is unnecessary:
+For macOS without venv, I recommend pip3 with `--user` so that `sudo` is unnecessary:
 
 ```
 pip3 install -r requirements.txt --user -U
 PATH=$PATH:~/Library/Python/3.6/bin
 ```
 
-For Linux with Python 3 installed:
+For Linux/Windows with Python 3 installed or for venv:
 
 ```
 pip3 install -r requirements.txt
 ```
-
-For Windows with Python 3 and pip installed:
+or if Python 3 is the default:
 
 ```
 pip install -r requirements.txt

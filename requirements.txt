@@ -10,5 +10,5 @@ MarkupSafe==1.0
 openpyxl==2.4.8
 PyMySQL==0.7.11
 requests==2.18.4
-selenium==3.5.0
+selenium==3.6.0
 urllib3==1.22
