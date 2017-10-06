@@ -26,9 +26,9 @@ To do:
 
 ## Prerequisites
 
-Python3 with modules:
+Python3.5+ with modules:
 
-openpyxl ddt html-testRunner selenium requests PyMySQL
+ddt html-testRunner openpyxl PyMySQL requests selenium
 
 ## Installation
 
