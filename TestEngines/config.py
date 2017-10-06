@@ -20,7 +20,4 @@ FILE_DIR = os.path.join(DIR, 'TestFiles')
 REPORT_DIR = os.path.join(DIR, 'TestReports')
 ENGINE_DIR = os.path.join(DIR, 'TestEngines')
 CASE_TEMP_DIR = os.path.join(FILE_DIR, 'TempCases')
-CASE_FILES = [x.path for x in os.scandir(CASE_DIR) if x.is_file() and x.name.endswith(".xlsx") and '~$' not in x.name]
-
-
 CONFIG = GetConfig(CONFIG_FILE)

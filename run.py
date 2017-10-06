@@ -23,9 +23,8 @@ saved_elements = {}
 check = {'equal': 'assertEqual', 'in': 'assertIn', '!equal': 'assertNotEqual', '!in': 'assertNotIn'}
 logging.basicConfig(level=getattr(logging, CONFIG.get('MAIN', 'LOG_LEVEL')),
                     format='%(asctime)s - %(levelname)s: %(message)s')
-print('Loading cases...\n' + '-' * 70)
-print('\n'.join(CASE_FILES))
-cases_all = [case for file in CASE_FILES for case in ReadAndFormatExcel(file).cases]
+case_files = [x.path for x in os.scandir(CASE_DIR) if x.is_file() and x.name.endswith(".xlsx") and '~$' not in x.name]
+cases_all = [case for file in case_files for case in ReadAndFormatExcel(file).cases]
 
 
 @ddt
@@ -114,4 +113,6 @@ class RunTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    print('Loading cases...\n' + '-' * 70)
+    print('\n'.join(case_files))
     unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output=REPORT_DIR, report_title='V2Test Report'))
