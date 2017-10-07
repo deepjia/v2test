@@ -7,8 +7,6 @@ import threading
 from TestEngines.config import *
 
 
-
-
 SIZE = 1024
 receivers = [(x.name, x.path) for x in os.scandir(REMOTE_CASE_DIR) if x.is_dir()]
 HEAD_STRUCT = '128sIq32s'
