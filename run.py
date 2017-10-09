@@ -8,6 +8,7 @@ import TestEngines.ui
 import TestEngines.http
 import TestEngines.shell
 import TestEngines.mysql
+import TestEngines.locust
 from datetime import datetime
 from TestEngines.config import *
 from TestEngines.excel import *
@@ -23,8 +24,8 @@ saved_elements = {}
 check = {'equal': 'assertEqual', 'in': 'assertIn', '!equal': 'assertNotEqual', '!in': 'assertNotIn'}
 logging.basicConfig(level=getattr(logging, CONFIG.get('MAIN', 'LOG_LEVEL')),
                     format='%(asctime)s - %(levelname)s: %(message)s')
-case_files = (x.path for x in os.scandir(CASE_DIR) if
-              x.is_file() and x.name.endswith(".xlsx") and '~$' not in x.name)
+case_files = [x.path for x in os.scandir(CASE_DIR) if
+              x.is_file() and x.name.endswith(".xlsx") and '~$' not in x.name]
 cases_all = (case for file in case_files for case in ReadAndFormatExcel(file).cases)
 
 

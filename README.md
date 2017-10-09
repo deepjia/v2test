@@ -12,6 +12,7 @@ Engines:
 * [HTTP] Requests HTTP interface test.
 * [Shell] Shell command or bash/python/ruby/perl script test.
 * [MySQL] MySQL database test.
+* [Locust] Locust load test.
 
 Modes:
 
@@ -21,7 +22,7 @@ Modes:
 
 Todos:
 
-* [Locust] Add locust load testing engine.
+* [Locust] Add more actions to Locust load testing engine.
 
 It's easy to develop new engines.
 
@@ -310,15 +311,15 @@ Save the element with the name *Value*, in order to be found by locator *saved*.
 
 *TIMEOUT* is the default timeout for all requests.
 
-### Case - Encapsulator
+### Case - Parameter
 
 ***\<headers\>, \</headers\>***
 
-All *Encapsulator: Value* between *\<headers\>* and *\</headers\>* will be encapsulator to *headers={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and headers will be the parameter.
+All *Parameter: Value* between *\<headers\>* and *\</headers\>* will be encapsulated to *headers={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and headers will be the parameter.
 
 ***\<params\>, \</params\>***
 
-All *Encapsulator: Value* between *\<params\>* and *\</params\>* will be encapsulator to *params={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and params will be the parameter.
+All *Parameter: Value* between *\<params\>* and *\</params\>* will be encapsulated to *params={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and params will be the parameter.
 
 ***params, headers, timeout, ...***
 
@@ -375,3 +376,35 @@ Run SQL Query and fetch as many as * records.
 ***sql***
 
 Run SQL scrpit.
+
+## Usage - Locust Engine
+
+### Config
+
+***USER***
+
+Default number of concurrent clients.
+
+***RATE***
+
+The default rate per second in which clients are spawned.
+
+***NUMBER***
+
+Default number of requests to perform.
+
+***HOST***
+
+Default host to load test in the following format: https://10.21.32.33
+
+### Case - Parameter
+
+***user/rate/number/host***
+
+Normal parameters for action *file*.
+
+### Case - Action
+
+***file***
+
+Run locust file.
