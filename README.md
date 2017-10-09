@@ -19,6 +19,11 @@ Modes:
 * [Receiver] Run cases received from senders and send report back.
 * [Sender] Send cases to receivers and gather reports.
 
+Todos:
+
+* [Locust] Add locust load testing engine.
+* [MySQL] Add more actions.
+
 It's easy to develop new engines.
 
 ![case](https://user-images.githubusercontent.com/1452602/31042295-3eac8c94-a56a-11e7-9f1f-d28d6ca45782.png)
