@@ -381,7 +381,7 @@ Run SQL scrpit.
 
 ### Config
 
-***USER***
+***CLIENT***
 
 Default number of concurrent clients.
 
@@ -397,9 +397,13 @@ Default number of requests to perform.
 
 Default host to load test in the following format: https://10.21.32.33
 
+***BACKGROUND***
+
+Set *BACKGROUND=Y* to run load tests in the background.
+
 ### Case - Parameter
 
-***user/rate/number/host***
+***client/rate/number/host***
 
 Normal parameters for action *file*.
 

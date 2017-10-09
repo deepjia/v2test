@@ -19,6 +19,7 @@ class Test:
             self.args[key] = value
 
     def action(self, action_value, action):
+        # run locust python script
         if action == 'file':
             path = ['locust', '-f', os.path.join(FILE_DIR, action_value), '--no-web',
                     datetime.now().strftime("--csv=TestReports/Test_Locust_%Y-%m-%d_%H-%M-%S")]
@@ -27,8 +28,12 @@ class Test:
                     path.extend(({'client': '-c', 'rate': '-r', 'number': '-n', 'host': '-H'}[k], w))
         else:
             raise ValueError('Invalid Action.')
-        r = subprocess.run(path, check=True, stdout=subprocess.PIPE)
-        return r.stdout.decode('utf-8')
+        # background or not
+        if CONFIG.get('LOCUST', 'BACKGROUND') == 'Y':
+            r = subprocess.run(path, check=True, stdout=subprocess.PIPE)
+            return r.stdout.decode('utf-8')
+        else:
+            subprocess.Popen(path)
 
     @staticmethod
     def locator_log(locator, locator_value, action, action_value):
