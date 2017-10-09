@@ -34,6 +34,11 @@ class Test:
                 if action_sub:
                     result = result[action_sub[0]]
                 return result
+            elif action == 'sql':
+                with open(os.path.join(FILE_DIR, action_value), 'r') as f:
+                    for line in filter(lambda x: x.strip(),f):
+                        cursor.execute(line)
+                return self.connection.commit()
 
     def clean(self):
         self.connection.close()

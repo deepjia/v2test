@@ -22,7 +22,6 @@ Modes:
 Todos:
 
 * [Locust] Add locust load testing engine.
-* [MySQL] Add more actions.
 
 It's easy to develop new engines.
 
@@ -357,10 +356,6 @@ Basic info of MySQL database.
 
 ### Case - Action
 
-***sql***
-
-Run SQL Query.
-
 ***commit***
 
 Run SQL Query and commit.
@@ -376,3 +371,7 @@ Run SQL Query and fetch one records.
 ***fetchmany.\****
 
 Run SQL Query and fetch as many as * records.
+
+***sql***
+
+Run SQL scrpit.
