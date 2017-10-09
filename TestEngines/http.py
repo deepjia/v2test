@@ -33,10 +33,6 @@ class Test:
                 value = {'True': True, 'False': False}[key]
             self.kw[key] = value
 
-    @staticmethod
-    def locator_log(locator, locator_value, action, action_value):
-        return locator + (' = ' if locator_value else '') + locator_value
-
     def action(self, action_value, action):
         if '://' not in action_value:
             action_value = urljoin(CONFIG.get('HTTP', 'BASEURL'), action_value)
@@ -44,5 +40,6 @@ class Test:
         self.kw = {}
         return r
 
-    def clean(self):
+    @staticmethod
+    def clean():
         pass
