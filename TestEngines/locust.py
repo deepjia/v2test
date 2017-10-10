@@ -21,8 +21,8 @@ class Test:
     def action(self, action_value, action):
         # run locust python script
         if action == 'file':
-            path = ['locust', '-f', os.path.join(FILE_DIR, action_value), '--no-web',
-                    datetime.now().strftime("--csv=TestReports/Test_Locust_%Y-%m-%d_%H-%M-%S")]
+            csv = "--csv=" + os.path.join('TestReports', 'Test_Locust_') + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+            path = ['locust', '-f', os.path.join(FILE_DIR, action_value), '--no-web', csv]
             for k, w in self.args.items():
                 if w:
                     path.extend(({'client': '-c', 'rate': '-r', 'number': '-n', 'host': '-H'}[k], w))
