@@ -23,6 +23,8 @@ Modes:
 Todos:
 
 * [Locust] Add more actions to Locust load testing engine.
+* [Framwork] May add loop/repeat action. 
+* [Other] May add some unit test engine, for example gtest.
 
 It's easy to develop new engines.
 
@@ -34,7 +36,7 @@ It's easy to develop new engines.
 
 Python 3.5+ with modules:
 
-ddt html-testRunner openpyxl PyMySQL requests selenium
+ddt html-testRunner openpyxl PyMySQL requests selenium locustio
 
 ## Installation
 

@@ -7,7 +7,7 @@ class WebsiteTasks(TaskSet):
 
     @task
     def about(self):
-        self.client.get("/repos/txels/ddt/issues")
+        self.client.get("/repos/deepjia/v2test/issues")
 
 
 class WebsiteUser(HttpLocust):
