@@ -21,7 +21,11 @@ COL_RUN_ERROR = 12
 LEN_MSG = int(CONFIG.get('MAIN', 'LEN_MSG'))
 
 saved_elements = {}
-check = {'equal': 'assertEqual', 'in': 'assertIn', '!equal': 'assertNotEqual', '!in': 'assertNotIn'}
+check = {'equal': 'assertEqual',
+         '!equal': 'assertNotEqual',
+         'in': 'assertIn',
+         '!in': 'assertNotIn',
+         'log':''}
 logging.basicConfig(level=getattr(logging, CONFIG.get('MAIN', 'LOG_LEVEL')),
                     format='%(asctime)s - %(levelname)s: %(message)s')
 case_files = [x.path for x in os.scandir(CASE_DIR) if
@@ -62,37 +66,34 @@ class RunTest(unittest.TestCase):
                     self.run.locator(locator, locator_value, action, action_value)
 
                 if action:
-                    action_list = action.split('.')
+                    action_name, *action_args = action.split('.')
 
                     # actions by framework
-                    if action_list[0] == 'log':
-                        message = response if action == 'log' else getattr(response, action_list[-1])
-                        logging.info('[Step] Response ' + ' = ' + str(message))
-
-                    elif action == 'save':
+                    if action_name == 'save':
                         if not action_value:
                             self.fail('This action need a value')
                         logging.info('[Step] Element ' + 'saved to ' + action_value)
                         saved_elements[action_value] = (self.run.last_locator, self.run.last_locator_value)
 
-                    elif action == 'wait':
+                    elif action_name == 'wait':
                         if not action_value:
                             self.fail('This action need a value')
                         logging.info('[Step] ' + action.title() + ' = ' + action_value)
                         time.sleep(int(action_value))
 
-                    elif action_list[0] in check:
-                        if not action_value:
-                            self.fail('This action need a value')
-                        message = str(response if len(action_list) == 1 else getattr(response, action_list[-1]))
-                        logging.info('[Step] Check ' + action_value + ' ' + action + ' ' +
+                    elif action_name in check:
+                        message = str(self.run.check(response, *action_args) if action_args else response)
+                        if action_name == 'log':
+                            logging.info('[Step] Response ' + ' = ' + str(message))
+                        else:
+                            logging.info('[Step] Check ' + action_value + ' ' + action + ' ' +
                                      message.replace('\n', '')[0:LEN_MSG] + ' /* Use log action to show more */')
-                        getattr(self, check[action_list[0]])(action_value, message)
+                            getattr(self, check[action_name])(action_value, message)
 
                     # actions by engine
                     else:
                         logging.info('[Step] ' + action.title() + ' | ' + action_value)
-                        response = self.run.action(action_value, *action_list)
+                        response = self.run.action(action_value, action_name, *action_args)
 
         except Exception as e:
             i = str(i + 1 if i else i)

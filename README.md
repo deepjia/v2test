@@ -23,6 +23,7 @@ Modes:
 Todos:
 
 * [Locust] Add more actions to Locust load testing engine.
+* [CI] Intergrate with Jenkins.
 * [Framwork] May add loop/repeat action. 
 * [Other] May add some unit test engine, for example gtest.
 
@@ -192,21 +193,15 @@ Used to interact with engines (some with framework), which is also known as "key
 
 Wait for *value* seconds.
 
-***log\[.\*\*\]***
+***equal\[.arg][.arg2]..., in\[.arg][.arg2]...***
 
-Log the returned.** value.
+Check whether *Value* equals or in the returned value.
+*arg* is the attar of the returned value, or method defined in engines.
 
-***equal\[.\*\*\]***
+***!equal\[.arg], !in\[.arg], log\[.arg]***
 
-Check whether *Value* equals the returned.** value.
-
-***in\[.\*\*\]***
-
-Check whether *Value* in the returned.** value.
-
-***!equal\[.\*\*\], !in\[.\*\*\]***
-
-"!" means not.
+*!* means not.
+*log* is used to show the value.
 
 You can refer to the examples in `TestCases`, it is easy to understand how to create test cases.
 
@@ -267,25 +262,13 @@ Find options by
 
 ### Case - Action
 
-***open***
+***open, close***
 
-Open the URL in *Value*, the default URL is in `config.ini`.
+Open the URL in *Value*, the default URL is in `config.ini`. Or close current browser window.
 
-***close***
+***type, press, click***
 
-Close current browser window.
-
-***type***
-
-Input *Value* in text areas.
-
-***click***
-
-Click the element.
-
-***press***
-
-Press Key *Value* of the keyboard.
+Input *Value* in text areas, or press Key *Value* of the keyboard, or click the element.
 
 ***[de]select\[.Key]***
 
@@ -329,9 +312,20 @@ Normal parameters.
 
 ### Case - Action
 
-***get, post, head, put, delete, options***
+***get, post, (head, put, delete, options)***
 
 Send HTTP requests with parameters to the *Value* URL.
+
+***equal\[.arg][.arg2]..., in\[.arg][.arg2]...***
+
+Check whether *Value* equals or in the returned value.
+*arg* is the attar of the returned value, or method defined in engines.
+
+For HTTP Engine, *arg=json* can conver json text to list/dict. Eg:
+
+response = '[{"number": 1,"title": "Snapshot for README.md"}]'
+
+*equal.json.0.title* means to compare *value* with 'Snapshot for README.md'
 
 ## Usage - Shell Engine
 

@@ -44,6 +44,16 @@ class Test:
         self.kw = {}
         return r
 
+    def check(self, response, arg, *args):
+        if arg == 'json':
+            r = response.json()
+            for i in args:
+                i = int(i) if isinstance(r, list) else i
+                r = r[i]
+        else:
+            r = getattr(response, arg)
+        return r
+
     @staticmethod
     def clean():
         pass
