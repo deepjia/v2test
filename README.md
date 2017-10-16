@@ -23,8 +23,8 @@ Modes:
 Todos:
 
 * [Locust] Add more actions to Locust load testing engine.
-* [CI] Intergrate with Jenkins.
-* [Framwork] May add loop/repeat action. 
+* [CI] Add guide for integration with Jenkins and Travis CI.
+* [Framework] May add loop/repeat action. 
 * [Other] May add some unit test engine, for example gtest.
 
 It's easy to develop new engines.
