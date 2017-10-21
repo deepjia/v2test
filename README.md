@@ -306,9 +306,17 @@ All *Parameter: Value* between *\<headers\>* and *\</headers\>* will be encapsul
 
 All *Parameter: Value* between *\<params\>* and *\</params\>* will be encapsulated to *params={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and params will be the parameter.
 
-***params, headers, timeout, ...***
+***\<data\>, \</data\>***
 
-Normal parameters.
+All *Parameter: Value* between *\<data\>* and *\</data\>* will be encapsulated to *data={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and params will be the parameter.
+
+***files***
+
+*files: Value* will be encapsulated to *files={'file': open(Value, 'rb')}*
+
+***params, headers, data, timeout, ...***
+
+Normal parameters of requests.
 
 ### Case - Action
 

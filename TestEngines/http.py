@@ -7,7 +7,9 @@ from TestEngines.config import *
 
 class Test:
     def __init__(self):
+        # self.kw:Parameters
         self.kw = {}
+        # self.kw_dict:headers/params/data...
         self.kw_dict = {}
         self.kw_temp = None
         self.locator('timeout', CONFIG.get('HTTP', 'TIMEOUT'))
@@ -15,7 +17,7 @@ class Test:
     # encapsulate params
     def locator(self, key, value, *args):
         del args
-        if key in ('<headers>', '<params>'):
+        if key in ('<headers>', '<params>', '<data>'):
             self.kw_temp = self.kw
             self.kw = {}
         elif key == '</headers>':
@@ -24,11 +26,17 @@ class Test:
         elif key == '</params>':
             self.kw_dict['params'] = self.kw
             self.kw = self.kw_temp
+        elif key == '</data>':
+            self.kw_dict['data'] = self.kw
+            self.kw = self.kw_temp
+
         else:
             if key == "timeout":
                 value = float(value)
-            elif key in ('headers', 'params'):
+            elif key in ('headers', 'params', 'data'):
                 value = eval(value)
+            elif key == 'files':
+                value = {'file': open(value, 'rb')}
             elif value.title() in ('True', 'False'):
                 value = {'True': True, 'False': False}[key]
             self.kw[key] = value
