@@ -14,7 +14,7 @@ Jinja2==2.9.5
 locustio==0.8.1
 MarkupSafe==1.0
 msgpack-python==0.4.8
-openpyxl==2.4.8
+openpyxl==2.4.9
 PyMySQL==0.7.11
 pyzmq==16.0.2
 requests==2.18.4
