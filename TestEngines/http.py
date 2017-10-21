@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import logging
 import requests
 from ast import literal_eval
 from urllib.parse import urljoin
@@ -8,42 +9,43 @@ from TestEngines.config import *
 
 class Test:
     def __init__(self):
+        self.tag = 'parameters'
+        self.father_tag = None
         self.parameters = {}
-        self.headers = self.params = self.data = None
+        #self.headers = self.params = self.data = None
         self.locator('timeout', CONFIG.get('HTTP', 'TIMEOUT'))
 
     # encapsulate params
     def locator(self, key, value, *args):
         del args
         # open
-        if key == '<headers>':
-            self.headers = {}
-        elif key == '<params>':
-            self.params = {}
-        elif key == '<data>':
-            self.data = []
+        # headers,params or else
+        if key.endswith('{'):
+            self.father_tag = self.tag
+            self.tag = key.rstrip('{')
+            logging.info("self.tag:"+self.tag)
+            setattr(self, self.tag, {})
+
+        # data or else
+        elif key.endswith('['):
+            self.tag = key.rstrip('[')
+            setattr(self, self.tag, [])
+
         # close
-        elif key == '</headers>':
-            self.parameters['headers'] = self.headers
-            self.headers = None
-        elif key == '</params>':
-            self.parameters['params'] = self.params
-            self.params = None
-        elif key == '</data>':
-            self.parameters['data'] = self.data
-            self.data = None
-        # encapsulate
-        elif self.data is not None:
-            self.data.append((key, literal_eval(value)))
-        elif self.headers is not None:
-            self.headers[key] = literal_eval(value)
-        elif self.params is not None:
-            self.params[key] = literal_eval(value)
-        # parameters
-        elif key == 'files':
-            self.parameters['files'] = {'file': open(value, 'rb')}
-        else:
-            self.parameters[key] = literal_eval(value)
+        elif key == '}' or key == ']':
+            getattr(self, self.father_tag)[self.tag] = getattr(self, self.tag)
+            setattr(self, self.tag, None)
+            self.tag = self.father_tag
+
+        # parameters encapsulate
+        elif key == 'files{}':
+            getattr(self, self.tag)[key] = {'file': open(value, 'rb')}
+
+        elif isinstance(getattr(self, self.tag), list):
+            getattr(self, self.tag).append((key, literal_eval(value)))
+
+        elif isinstance(getattr(self, self.tag), dict):
+            getattr(self, self.tag)[key] = literal_eval(value)
 
     @staticmethod
     def locator_log(locator, locator_value, *action_and_value):

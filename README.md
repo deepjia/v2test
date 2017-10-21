@@ -22,10 +22,12 @@ Modes:
 
 Todos:
 
-* [Locust] Add more actions to Locust load testing engine.
-* [CI] Add guide for integration with Jenkins and Travis CI.
+* [Engine] Add more actions to Locust load testing engine.
+* [Doc] Add guide for integration with Jenkins and Travis CI.
 * [Framework] May add loop/repeat action. 
-* [Other] May add some unit test engine, for example gtest.
+* [Engine] May add some unit test engine, for example gtest.
+* [Doc] Document for human beings.
+* [Deploy] Docker containerization.
 
 It's easy to develop new engines.
 
@@ -41,7 +43,7 @@ ddt html-testRunner openpyxl PyMySQL requests selenium locustio
 
 ## Installation
 
-Install Git and Python 3. Homebrew is recommended for macOS.
+Install Git and Python 3 with pip. Homebrew is recommended for macOS.
 
 Then, clone the repo:
 
@@ -298,25 +300,29 @@ Save the element with the name *Value*, in order to be found by locator *saved*.
 
 ### Case - Parameter
 
-***\<headers\>, \</headers\>***
+***headers, params, data, files ...{***
 
-All *Parameter: Value* between *\<headers\>* and *\</headers\>* will be encapsulated to *headers={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and headers will be the parameter of your request.
+***}***
 
-***\<params\>, \</params\>***
+All *Parameter: Value* between *Tag{* and *}* will be encapsulated to dict: *Tag={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and added to the parameter of your request.
 
-All *Parameter: Value* between *\<params\>* and *\</params\>* will be encapsulated to *params={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and params will be the parameter of your request.
+Nesting is supported.
 
-***\<data\>, \</data\>***
+***data, ...[***
 
-All *Parameter: Value* between *\<data\>* and *\</data\>* will be encapsulated to *data=[(Encapsulator1, Value1), (Encapsulator2, Value2), ...]*, and data will be the parameter of your request.
+***]***
 
-***files***
+All *Parameter: Value* between *Tag[* and *]* will be encapsulated to list: *Tag=[(Encapsulator1, Value1), (Encapsulator2, Value2), ...]*, and added to the parameter of your request.
 
-*files: Value* will be encapsulated to *files={'file': open(Value, 'rb')}*
+Nesting is supported.
+
+***files{}***
+
+Specially, *files{}: Value* will be encapsulated to *files={'file': open(Value, 'rb')}*
 
 ***params, headers, data, timeout, ...***
 
-Normal parameters of requests. If *Value* is a string, quote it.
+Parameters of requests. *Value* should be valid python types, such as strings, numbers, tuples, lists, dicts, booleans, and None. For example, strings should be quoted.
 
 ### Case - Action
 
