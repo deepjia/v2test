@@ -1,58 +1,66 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import requests
+from ast import literal_eval
 from urllib.parse import urljoin
 from TestEngines.config import *
 
 
 class Test:
     def __init__(self):
-        # self.kw:Parameters
-        self.kw = {}
-        # self.kw_dict:headers/params/data...
-        self.kw_dict = {}
-        self.kw_temp = None
+        self.parameters = {}
+        self.headers = self.params = self.data = None
         self.locator('timeout', CONFIG.get('HTTP', 'TIMEOUT'))
 
     # encapsulate params
     def locator(self, key, value, *args):
         del args
-        if key in ('<headers>', '<params>', '<data>'):
-            self.kw_temp = self.kw
-            self.kw = {}
+        # open
+        if key == '<headers>':
+            self.headers = {}
+        elif key == '<params>':
+            self.params = {}
+        elif key == '<data>':
+            self.data = []
+        # close
         elif key == '</headers>':
-            self.kw_dict['headers'] = self.kw
-            self.kw = self.kw_temp
+            self.parameters['headers'] = self.headers
+            self.headers = None
         elif key == '</params>':
-            self.kw_dict['params'] = self.kw
-            self.kw = self.kw_temp
+            self.parameters['params'] = self.params
+            self.params = None
         elif key == '</data>':
-            self.kw_dict['data'] = self.kw
-            self.kw = self.kw_temp
-
+            self.parameters['data'] = self.data
+            self.data = None
+        # encapsulate
+        elif self.data:
+            self.data.append((key, value))
+        elif self.headers:
+            self.headers[key] = value
+        elif self.params:
+            self.params[key] = value
+        # parameters
+        elif key == 'files':
+            self.parameters['files'] = {'file': open(value, 'rb')}
         else:
-            if key == "timeout":
-                value = float(value)
-            elif key in ('headers', 'params', 'data'):
-                value = eval(value)
-            elif key == 'files':
-                value = {'file': open(value, 'rb')}
-            elif value.title() in ('True', 'False'):
-                value = {'True': True, 'False': False}[key]
-            self.kw[key] = value
+            self.parameters[key] = literal_eval(value)
 
     @staticmethod
-    def locator_log(locator, locator_value, action, action_value):
+    def locator_log(locator, locator_value, *action_and_value):
+        # Do not log action_and_value for this engine
+        del action_and_value
         return locator + (' = ' if locator_value else '') + locator_value
 
     def action(self, action_value, action):
         if '://' not in action_value:
-            action_value = urljoin(CONFIG.get('HTTP', 'BASEURL'), action_value)
-        r = getattr(requests, action)(action_value, **self.kw, **self.kw_dict)
-        self.kw = {}
+            action_value = urljoin(
+                CONFIG.get('HTTP', 'BASEURL'), action_value)
+        r = getattr(requests, action)(action_value, **self.parameters)
+        # self.parameters = {}
         return r
 
-    def check(self, response, arg, *args):
+    @staticmethod
+    def check(response, arg, *args):
         if arg == 'json':
             r = response.json()
             for i in args:
