@@ -18,27 +18,37 @@ def driver_func():
     if driver == 'Safari':
         return webdriver.Safari()
     elif driver == 'Remote':
-        return webdriver.Remote(
-            command_executor=CONFIG.get('UI', 'REMOTE_SERVER'),
-            desired_capabilities=getattr(DesiredCapabilities, CONFIG.get('UI', 'REMOTE_BROWSER').upper()))
+        browser = CONFIG.get('UI', 'REMOTE_BROWSER').upper()
+        kwargs = {
+            'command_executor': CONFIG.get('UI', 'REMOTE_SERVER'),
+            'desired_capabilities': getattr(DesiredCapabilities, browser)}
+        return webdriver.Remote(**kwargs)
     else:
         platform_os = platform.system()
-        os_type = {'Darwin': 'mac', 'Linux': 'linux', 'Windows': 'win'}[platform_os] + CONFIG.get('UI', 'BIT')
+        os_type = {'Darwin': 'mac',
+                   'Linux': 'linux',
+                   'Windows': 'win'}[platform_os] + CONFIG.get('UI', 'BIT')
         driver_file = '.exe' if platform_os == 'Windows' else ''
-        driver_file = {'Firefox': 'geckodriver', 'Chrome': 'chromedriver', 'Ie': 'IEDriverServer'}[
-                          driver] + driver_file
+        driver_file = {'Firefox': 'geckodriver',
+                       'Chrome': 'chromedriver',
+                       'Ie': 'IEDriverServer'}[driver] + driver_file
         driver_file = os.path.join(ENGINE_DIR, os_type, driver_file)
         if driver == 'Ie':
             return webdriver.Ie(driver_file)
         if driver == 'Firefox':
-            return webdriver.Firefox(executable_path=driver_file, log_path=None)
+            return webdriver.Firefox(
+                executable_path=driver_file, log_path=None)
         if driver == 'Chrome':
             return webdriver.Chrome(executable_path=driver_file)
 
 
 class Test:
     def __init__(self):
-        self.select = self.elem = self.last_locator = self.last_locator_value = self.driver = None
+        self.driver = None
+        self.select = None
+        self.elem = None
+        self.last_locator = None
+        self.last_locator_value = None
 
     # find elements
     def locator(self, locator, locator_value, action, action_value):
@@ -49,19 +59,20 @@ class Test:
             if not action_value:
                 raise ValueError('This action need a value.')
             self.elem = WebDriverWait(self.driver, int(action_value)).until(
-                expected_conditions.presence_of_element_located((getattr(By, locator.upper()), locator_value))
-            )
+                expected_conditions.presence_of_element_located((
+                    getattr(By, locator.upper()), locator_value)))
         else:
-            self.elem = self.driver.find_element(getattr(By, locator.upper()), locator_value)
+            self.elem = self.driver.find_element(
+                getattr(By, locator.upper()), locator_value)
 
     @staticmethod
     def locator_log(locator, locator_value, action, action_value):
-        locator_log = locator + (' = ' if locator_value else '') + locator_value
+        log = locator + (' = ' if locator_value else '') + locator_value
         # waiting is special
         if action == 'waiting':
-            return 'Locate ' + locator_log + ' within ' + action_value + 's waiting'
+            return 'Locate ' + log + ' within ' + action_value + 's waiting'
         else:
-            return locator_log
+            return log
 
     def action(self, action_value, action, *action_sub):
         # Action waiting is processed when locating
