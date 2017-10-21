@@ -300,15 +300,15 @@ Save the element with the name *Value*, in order to be found by locator *saved*.
 
 ***\<headers\>, \</headers\>***
 
-All *Parameter: Value* between *\<headers\>* and *\</headers\>* will be encapsulated to *headers={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and headers will be the parameter.
+All *Parameter: Value* between *\<headers\>* and *\</headers\>* will be encapsulated to *headers={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and headers will be the parameter of your request.
 
 ***\<params\>, \</params\>***
 
-All *Parameter: Value* between *\<params\>* and *\</params\>* will be encapsulated to *params={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and params will be the parameter.
+All *Parameter: Value* between *\<params\>* and *\</params\>* will be encapsulated to *params={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and params will be the parameter of your request.
 
 ***\<data\>, \</data\>***
 
-All *Parameter: Value* between *\<data\>* and *\</data\>* will be encapsulated to *data={Encapsulator1: Value1, Encapsulator2: Value2, ...}*, and params will be the parameter.
+All *Parameter: Value* between *\<data\>* and *\</data\>* will be encapsulated to *data=[(Encapsulator1, Value1), (Encapsulator2, Value2), ...]*, and data will be the parameter of your request.
 
 ***files***
 
@@ -316,7 +316,7 @@ All *Parameter: Value* between *\<data\>* and *\</data\>* will be encapsulated t
 
 ***params, headers, data, timeout, ...***
 
-Normal parameters of requests.
+Normal parameters of requests. If *Value* is a string, quote it.
 
 ### Case - Action
 

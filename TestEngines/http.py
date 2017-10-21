@@ -33,12 +33,12 @@ class Test:
             self.parameters['data'] = self.data
             self.data = None
         # encapsulate
-        elif self.data:
-            self.data.append((key, value))
-        elif self.headers:
-            self.headers[key] = value
-        elif self.params:
-            self.params[key] = value
+        elif self.data is not None:
+            self.data.append((key, literal_eval(value)))
+        elif self.headers is not None:
+            self.headers[key] = literal_eval(value)
+        elif self.params is not None:
+            self.params[key] = literal_eval(value)
         # parameters
         elif key == 'files':
             self.parameters['files'] = {'file': open(value, 'rb')}
