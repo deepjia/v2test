@@ -52,42 +52,42 @@ class Test:
         self.select = None
         self.elem = None
         self.last_locator = None
-        self.last_locator_value = None
+        self.last_location = None
 
     # find elements
-    def locator(self, locator, locator_value, action, action_value):
+    def locator(self, locator, location, action, value):
         # saved for action 'save'
-        self.last_locator, self.last_locator_value = locator, locator_value
+        self.last_locator, self.last_location = locator, location
         # waiting is an action which acts when locating.
         if action == 'waiting':
-            if not action_value:
+            if not value:
                 raise ValueError('This action need a value.')
-            self.elem = WebDriverWait(self.driver, int(action_value)).until(
+            self.elem = WebDriverWait(self.driver, int(value)).until(
                 expected_conditions.presence_of_element_located(
-                    (getattr(By, locator.upper()), locator_value)
+                    (getattr(By, locator.upper()), location)
                 )
             )
         else:
             self.elem = self.driver.find_element(
-                getattr(By, locator.upper()), locator_value)
+                getattr(By, locator.upper()), location)
 
     @staticmethod
-    def locator_log(locator, locator_value, action, action_value):
-        log = locator + (' = ' if locator_value else '') + locator_value
+    def locator_log(locator, location, action, value):
+        log = locator + (' = ' if location else '') + location
         # waiting acts when locating.
         if action == 'waiting':
-            return 'Locate ' + log + ' within ' + action_value + 's waiting'
+            return 'Locate ' + log + ' within ' + value + 's waiting'
         else:
             return log
 
-    def action(self, action_value, action, *action_sub):
+    def action(self, value, action, *action_sub):
         # action waiting is processed when locating
         if action == 'open':
             self.driver = driver_func()
             self.driver.implicitly_wait(CONFIG.get('UI', 'WAIT'))
-            if not action_value:
-                action_value = CONFIG.get('UI', 'URL')
-            return self.driver.get(action_value)
+            if not value:
+                value = CONFIG.get('UI', 'URL')
+            return self.driver.get(value)
 
         elif action == 'close':
             if driver == 'Safari':
@@ -97,19 +97,19 @@ class Test:
 
         elif action == 'type':
             self.elem.clear()
-            return self.elem.send_keys(action_value)
+            return self.elem.send_keys(value)
 
         elif action == 'click':
             return self.elem.click()
 
         elif action == 'press':
             self.elem.clear()
-            return self.elem.send_keys(getattr(Keys, action_value))
+            return self.elem.send_keys(getattr(Keys, value))
 
         elif action in ('select', 'deselect'):
             self.select = Select(self.elem)
             # (de)select all
-            if not action_value:
+            if not value:
                 return getattr(self.select, action + '_all')()
             # select by action_sub
             if action_sub:
@@ -117,7 +117,7 @@ class Test:
             # select by visible_text by default
             else:
                 action = action + '_visible_text'
-            return getattr(self.select, action)(action_value)
+            return getattr(self.select, action)(value)
 
     def clean(self):
         if driver != 'Safari':
