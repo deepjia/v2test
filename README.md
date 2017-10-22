@@ -258,10 +258,6 @@ Find elements by id, name, xpath etc.
 
 Find previously saved elements. (Saved by the *save* action.)
 
-***index, value, visible\_text***
-
-Find options by 
-
 ### Case - Action
 
 ***open, close***
@@ -291,12 +287,12 @@ Save the element with the name *Value*, in order to be found by locator *saved*.
 
 If the element is displayed/enabled/selected, return 'True'. Otherwise 'False'.
 
-***get_attribute[.Key]***
+***get_attribute.Key***
 
 Gets the given attribute or property of the element.
 Eg: get_attribute.value
 
-***get_property[.Key]***
+***get_property.Key***
 
 Gets the given property of the element.
 
