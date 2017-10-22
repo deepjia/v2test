@@ -106,6 +106,31 @@ class Test:
             self.elem.clear()
             return self.elem.send_keys(getattr(Keys, value))
 
+        elif action == 'text':
+            return self.elem.text
+
+        elif action == 'tag_name':
+            return self.elem.tag_name
+
+        elif action == 'is_selected':
+            return self.elem.is_selected()
+
+        elif action == 'is_displayed':
+            return self.elem.is_displayed()
+
+        elif action == 'is_enabled':
+            return self.elem.is_enabled()
+
+        elif action == 'get_attribute':
+            if not action_sub:
+                raise ValueError('Action get_attribute need a sub-action.')
+            return self.elem.get_attribute(action_sub[0])
+
+        elif action == 'get_property':
+            if not action_sub:
+                raise ValueError('Action get_property need a sub-action.')
+            return self.elem.get_property(action_sub[0])
+
         elif action in ('select', 'deselect'):
             self.select = Select(self.elem)
             # (de)select all

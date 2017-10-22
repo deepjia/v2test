@@ -287,6 +287,22 @@ Explicit waits, wait for the element to appear, up to *Value* seconds.
 
 Save the element with the name *Value*, in order to be found by locator *saved*.
 
+***is_displayed, is_enabled, is_selected***
+
+If the element is displayed/enabled/selected, return 'True'. Otherwise 'False'.
+
+***get_attribute[.Key]***
+
+Gets the given attribute or property of the element.
+Eg: get_attribute.value
+
+***get_property[.Key]***
+
+Gets the given property of the element.
+
+***text, tag_name***
+
+Gets the text/tag_name of the element.
 
 ## Usage - HTTP Engine
 
