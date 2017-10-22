@@ -61,52 +61,56 @@ class RunTest(unittest.TestCase):
             logging.info('[Case] ' + case_id + ': ' + case_name)
             # read lines from case
             for i in range(0, len(case)):
-                locator, locator_value, action, action_value = [
+                locator, location, action, value = [
                     str(case[i][column]) if case[i][column] else ''
                     for column in (5, 6, 7, 8)]
                 locator, action = locator.lower(), action.lower()
+
                 # locate elements or encapsulate params
                 if locator:
+                    # saved is a locator powered by framework
                     if locator == 'saved':
-                        logging.info('[Step] {Element} Saved = ' + locator_value)
-                        locator, locator_value = saved_elements[locator_value]
-                    logging.info(
-                        '[Step] {Element} '
-                        + self.run.locator_log(locator, locator_value, action, action_value))
-                    self.run.locator(locator, locator_value, action, action_value)
+                        logging.info('[Step] {Element} Saved = ' + location)
+                        locator, location = saved_elements[location]
+                    # other locator powered by engines
+                    logging.info('[Step] {Element} ' + self.run.locator_log(
+                        locator, location, action, value))
+                    self.run.locator(locator, location, action, value)
 
                 if action:
                     action_name, *action_args = action.split('.')
-
                     # actions by framework
                     if action_name == 'save':
-                        if not action_value:
+                        if not value:
                             self.fail('This action need a value')
-                        logging.info('[Step] Element ' + 'saved to ' + action_value)
-                        saved_elements[action_value] = (
-                            self.run.last_locator, self.run.last_locator_value)
+                        logging.info('[Step] Element ' + 'saved to ' + value)
+                        saved_elements[value] = (
+                            self.run.last_locator, self.run.last_location)
 
                     elif action_name == 'wait':
-                        if not action_value:
+                        if not value:
                             self.fail('This action need a value')
-                        logging.info('[Step] ' + action.title() + ' = ' + action_value)
-                        time.sleep(int(action_value))
+                        logging.info('[Step] ' + action.title() + ' = ' + value)
+                        time.sleep(int(value))
 
                     elif action_name in check:
                         message = str(
-                            self.run.check(response, *action_args) if action_args else response)
+                            self.run.check(response, *action_args) if action_args
+                            else response)
                         if action_name == 'log':
-                            logging.info('[Step] Response ' + ' = ' + str(message))
+                            logging.info('[Step] Response ' + ' = ' + message)
                         else:
-                            logging.info('[Step] Check ' + action_value + ' ' + action
-                                         + ' ' + message.replace('\n', '')[0:LEN_MSG]
-                                         + ' /* Use log action to show more */')
-                            getattr(self, check[action_name])(action_value, message)
+                            logging.info(
+                                '[Step] Check ' + value + ' ' + action + ' '
+                                + message.replace('\n', '')[0:LEN_MSG]
+                                + ' /* Use log action to show more */')
+                            getattr(self, check[action_name])(value, message)
 
                     # actions by engine
                     else:
-                        logging.info('[Step] ' + action.title() + ' | ' + action_value)
-                        response = self.run.action(action_value, action_name, *action_args)
+                        logging.info('[Step] ' + action.title() + ' | ' + value)
+                        response = self.run.action(
+                            value, action_name, *action_args)
 
         except Exception as e:
             i = str(i + 1 if i else i)

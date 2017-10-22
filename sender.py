@@ -8,7 +8,8 @@ from TestEngines.config import *
 
 
 SIZE = 1024
-receivers = [(x.name, x.path) for x in os.scandir(REMOTE_CASE_DIR) if x.is_dir()]
+receivers = [(x.name, x.path)
+             for x in os.scandir(REMOTE_CASE_DIR) if x.is_dir()]
 HEAD_STRUCT = '128sIq32s'
 info_size = struct.calcsize(HEAD_STRUCT)
 
@@ -22,25 +23,31 @@ def calc_md5(path_to_calc):
 
 
 def unpack_file_info(file_info):
-    file_name, file_name_len, file_size, md5 = struct.unpack(HEAD_STRUCT, file_info)
+    file_name, file_name_len, file_size, md5 = struct.unpack(
+        HEAD_STRUCT, file_info)
     file_name = file_name[:file_name_len]
     return file_name, file_size, md5
 
 
 def tcp_link(receiver_name, receiver_path):
     # connect to receiver
-    receiver_server = CONFIG.get('SENDER_MODE', receiver_name.upper()).split(':')
+    receiver_server = CONFIG.get(
+        'SENDER_MODE', receiver_name.upper()).split(':')
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # establish connection
     sock.connect((receiver_server[0], int(receiver_server[1])))
     # read cases
-    remote_case = [(x.name, x.path, len(x.name), os.path.getsize(x.path), calc_md5(x.path))
-                   for x in os.scandir(receiver_path) if x.is_file()
-                   and x.name.endswith(".xlsx") and '~$' not in x.name]
+    remote_case = [
+        (x.name, x.path, len(x.name), os.path.getsize(x.path), calc_md5(x.path))
+        for x in os.scandir(receiver_path)
+        if x.is_file() and x.name.endswith(".xlsx") and '~$' not in x.name]
     # send cases
     print("\nSending cases...")
     for file_name, file_path, file_name_len, file_size, file_md5 in remote_case:
-        file_head = struct.pack(HEAD_STRUCT, file_name.encode('utf-8'), file_name_len, file_size,
+        file_head = struct.pack(HEAD_STRUCT,
+                                file_name.encode('utf-8'),
+                                file_name_len,
+                                file_size,
                                 file_md5.encode('utf-8'))
         sock.send(file_head)
         with open(file_path, 'rb') as fr:

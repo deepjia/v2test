@@ -40,8 +40,9 @@ class Test:
             shell = True
         else:
             raise ValueError('Invalid Action.')
-        r = subprocess.run(path, shell=shell, check=True,
-                           stdout=subprocess.PIPE)
+        r = subprocess.run(
+            path, shell=shell, check=True, stdout=subprocess.PIPE
+        )
         return r.stdout.decode('utf-8')
 
     @staticmethod

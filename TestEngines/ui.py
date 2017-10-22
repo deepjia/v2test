@@ -21,25 +21,29 @@ def driver_func():
         browser = CONFIG.get('UI', 'REMOTE_BROWSER').upper()
         kwargs = {
             'command_executor': CONFIG.get('UI', 'REMOTE_SERVER'),
-            'desired_capabilities': getattr(DesiredCapabilities, browser)}
+            'desired_capabilities': getattr(DesiredCapabilities, browser)
+        }
         return webdriver.Remote(**kwargs)
     else:
-        platform_os = platform.system()
-        os_type = {'Darwin': 'mac',
-                   'Linux': 'linux',
-                   'Windows': 'win'}[platform_os] + CONFIG.get('UI', 'BIT')
-        driver_file = '.exe' if platform_os == 'Windows' else ''
+        # make driver path
+        os_name = platform.system()
+        driver_dir = {'Darwin': 'mac',
+                      'Linux': 'linux',
+                      'Windows': 'win'
+                      }[os_name] + CONFIG.get('UI', 'BIT')
         driver_file = {'Firefox': 'geckodriver',
                        'Chrome': 'chromedriver',
-                       'Ie': 'IEDriverServer'}[driver] + driver_file
-        driver_file = os.path.join(ENGINE_DIR, os_type, driver_file)
+                       'Ie': 'IEDriverServer'
+                       }[driver] + '.exe' if os_name == 'Windows' else ''
+        driver_path = os.path.join(ENGINE_DIR, driver_dir, driver_file)
+        # ie, firefox, chrome need more parameters
         if driver == 'Ie':
-            return webdriver.Ie(driver_file)
+            return webdriver.Ie(driver_path)
         if driver == 'Firefox':
             return webdriver.Firefox(
-                executable_path=driver_file, log_path=None)
+                executable_path=driver_path, log_path=None)
         if driver == 'Chrome':
-            return webdriver.Chrome(executable_path=driver_file)
+            return webdriver.Chrome(executable_path=driver_path)
 
 
 class Test:
@@ -52,15 +56,17 @@ class Test:
 
     # find elements
     def locator(self, locator, locator_value, action, action_value):
-        # self.last_locator, self.last_locator_value are for action 'save'
+        # saved for action 'save'
         self.last_locator, self.last_locator_value = locator, locator_value
-        # waiting is an action which help locating.
+        # waiting is an action which acts when locating.
         if action == 'waiting':
             if not action_value:
                 raise ValueError('This action need a value.')
             self.elem = WebDriverWait(self.driver, int(action_value)).until(
-                expected_conditions.presence_of_element_located((
-                    getattr(By, locator.upper()), locator_value)))
+                expected_conditions.presence_of_element_located(
+                    (getattr(By, locator.upper()), locator_value)
+                )
+            )
         else:
             self.elem = self.driver.find_element(
                 getattr(By, locator.upper()), locator_value)
@@ -68,14 +74,14 @@ class Test:
     @staticmethod
     def locator_log(locator, locator_value, action, action_value):
         log = locator + (' = ' if locator_value else '') + locator_value
-        # waiting is special
+        # waiting acts when locating.
         if action == 'waiting':
             return 'Locate ' + log + ' within ' + action_value + 's waiting'
         else:
             return log
 
     def action(self, action_value, action, *action_sub):
-        # Action waiting is processed when locating
+        # action waiting is processed when locating
         if action == 'open':
             self.driver = driver_func()
             self.driver.implicitly_wait(CONFIG.get('UI', 'WAIT'))
@@ -102,10 +108,13 @@ class Test:
 
         elif action in ('select', 'deselect'):
             self.select = Select(self.elem)
+            # (de)select all
             if not action_value:
                 return getattr(self.select, action + '_all')()
+            # select by action_sub
             if action_sub:
                 action = action + '_by_' + action_sub[0]
+            # select by visible_text by default
             else:
                 action = action + '_visible_text'
             return getattr(self.select, action)(action_value)

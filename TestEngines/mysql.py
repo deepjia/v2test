@@ -6,13 +6,15 @@ from TestEngines.config import *
 
 class Test:
     def __init__(self):
-        self.connection = pymysql.connect(host=CONFIG.get('MYSQL', 'HOST'),
-                                          port=int(CONFIG.get('MYSQL', 'PORT')),
-                                          user=CONFIG.get('MYSQL', 'USERNAME'),
-                                          password=CONFIG.get('MYSQL', 'PASSWORD'),
-                                          db=CONFIG.get('MYSQL', 'DATABASE'),
-                                          charset=CONFIG.get('MYSQL', 'CHARSET'),
-                                          cursorclass=pymysql.cursors.DictCursor)
+        self.connection = pymysql.connect(
+            host=CONFIG.get('MYSQL', 'HOST'),
+            port=int(CONFIG.get('MYSQL', 'PORT')),
+            user=CONFIG.get('MYSQL', 'USERNAME'),
+            password=CONFIG.get('MYSQL', 'PASSWORD'),
+            db=CONFIG.get('MYSQL', 'DATABASE'),
+            charset=CONFIG.get('MYSQL', 'CHARSET'),
+            cursorclass=pymysql.cursors.DictCursor
+        )
 
     def action(self, action_value, action, *action_sub):
         with self.connection.cursor() as cursor:

@@ -30,7 +30,9 @@ class ReadAndFormatExcel:
 
             if case_id:
                 # if case_id, then top border
-                border = Border(top=Side(border_style='thin', color="FF000000"))
+                border = Border(
+                    top=Side(border_style='thin', color="FF000000")
+                )
                 # Y, case to run
                 if sheet.cell(row=i, column=1).value.lower() == 'y':
                     run_flag = 1
@@ -49,9 +51,14 @@ class ReadAndFormatExcel:
             for x in range(1, 13):
                 sheet.cell(row=i, column=x).border = border
 
-            # append the row to valid_rows, and add file/file_name/sheet_name/row info
-            self.valid_rows.append([sheet.cell(row=i, column=x).value for x in range(1, 10)])
-            self.valid_rows[-1].extend((self.file, os.path.basename(self.file), sheet.title, i))
+            # append the row to valid_rows and
+            # add file/file_name/sheet_name/row info
+            self.valid_rows.append(
+                [sheet.cell(row=i, column=x).value for x in range(1, 10)]
+            )
+            self.valid_rows[-1].extend(
+                (self.file, os.path.basename(self.file), sheet.title, i)
+            )
 
             if i == sheet.max_row or sheet.cell(row=i + 1, column=2).value:
                 self.cases.append(self.valid_rows)
