@@ -34,7 +34,7 @@ def driver_func():
         driver_file = {'Firefox': 'geckodriver',
                        'Chrome': 'chromedriver',
                        'Ie': 'IEDriverServer'
-                       }[driver] + '.exe' if os_name == 'Windows' else ''
+                       }[driver] + ('.exe' if os_name == 'Windows' else '')
         driver_path = os.path.join(ENGINE_DIR, driver_dir, driver_file)
         # ie, firefox, chrome need more parameters
         if driver == 'Ie':
