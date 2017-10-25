@@ -99,27 +99,15 @@ class Test:
             self.elem.clear()
             return self.elem.send_keys(value)
 
-        elif action == 'click':
-            return self.elem.click()
+        elif action in ('click', 'is_selected', 'is_displayed', 'is_enabled'):
+            return getattr(self.elem, action)()
 
         elif action == 'press':
             self.elem.clear()
             return self.elem.send_keys(getattr(Keys, value))
 
-        elif action == 'text':
-            return self.elem.text
-
-        elif action == 'tag_name':
-            return self.elem.tag_name
-
-        elif action == 'is_selected':
-            return self.elem.is_selected()
-
-        elif action == 'is_displayed':
-            return self.elem.is_displayed()
-
-        elif action == 'is_enabled':
-            return self.elem.is_enabled()
+        elif action in ('text', 'tag_name'):
+            return getattr(self.elem, action)
 
         elif action == 'get_attribute':
             if not action_sub:

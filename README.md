@@ -12,6 +12,7 @@ Engines:
 * [HTTP] Requests HTTP interface test.
 * [Shell] Shell command or bash/python/ruby/perl script test.
 * [MySQL] MySQL database test.
+* [Appium] Appium iOS/Android test.
 * [Locust] Locust load test.
 
 Modes:
@@ -22,12 +23,14 @@ Modes:
 
 Todos:
 
-* [Engine] Add more actions to Locust load testing engine.
 * [Doc] Add guide for integration with Jenkins and Travis CI.
-* [Framework] May add loop/repeat action. 
+* [Doc] Documents for human beings.
+* [Engine] Scripts for appium installation.
+* [Engine] Add more actions to Locust load testing engine.
 * [Engine] May add some unit test engine, for example gtest.
-* [Doc] Document for human beings.
 * [Deploy] Docker containerization.
+* [Framework] Support logic.
+* [Framework] Add loop/repeat action. 
 
 It's easy to develop new engines.
 
@@ -299,6 +302,45 @@ Gets the given property of the element.
 ***text, tag_name***
 
 Gets the text/tag_name of the element.
+
+## Usage - Appium Engine
+
+### Config
+
+Refer to the document of [appium](http://appium.io/slate/en/master/?python#).
+
+### Case - Locator
+
+***ios_uiautomation, android_uiautomator, ios_predicate, accessibility_id, class_name, xpath***
+
+Refer to [finding-and-interacting-with-elements](http://appium.io/slate/en/master/?python#finding-and-interacting-with-elements) of appium.
+
+***x, y***
+
+(x, y) location of touch area.
+
+### Case - Action
+
+Refer to [automating-mobile-gestures](http://appium.io/slate/en/master/?python#automating-mobile-gestures) of appium.
+
+***touch_action{***
+
+***}***
+
+All actions between *touch_action{* and *}* will run as a touch action chain.
+
+***tap, press, long_press, move_to***
+
+Touch actions that can be chained by *touch_action{* and *}* or be used standalone.
+
+*Vaule* is count for *tap* or duration for *long_press*
+
+***zoom, pinch, scroll***
+
+Zoom, pinch or scroll to an element.
+
+Actions of UI Engine can also be used.
+
 
 ## Usage - HTTP Engine
 
