@@ -62,8 +62,7 @@ class RunTest(unittest.TestCase):
             # read lines from case
             for i in range(0, len(case)):
                 locator, location, action, value = [
-                    str(case[i][column]) if case[i][column] else ''
-                    for column in (5, 6, 7, 8)]
+                    str(case[i][column] or '') for column in (5, 6, 7, 8)]
                 locator, action = locator.lower(), action.lower()
 
                 # locate elements or encapsulate params
