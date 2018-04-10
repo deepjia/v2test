@@ -13,6 +13,7 @@ python:
 #  - sleep 3 # give xvfb some time to start
 #env:
 #  - MOZ_HEADLESS=1
+sudo: required
 addons:
   chrome: stable
   #firefox: latest
