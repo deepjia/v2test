@@ -43,7 +43,12 @@ def driver_func():
             return webdriver.Firefox(
                 executable_path=driver_path, log_path=None)
         if driver == 'Chrome':
-            return webdriver.Chrome(executable_path=driver_path)
+            options = None
+            if CONFIG.get('UI', 'HEADLESS').upper() == 'Y':
+                options = webdriver.ChromeOptions()
+                options.add_argument('headless')
+                options.add_argument(CONFIG.get('UI', 'HEADLESS_WINDOW_SIZE').lower())
+            return webdriver.Chrome(executable_path=driver_path, chrome_options=options)
 
 
 class Test:
