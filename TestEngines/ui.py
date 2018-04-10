@@ -13,7 +13,6 @@ from TestEngines.config import *
 
 driver = CONFIG.get('UI', 'DRIVER').title()
 
-
 def driver_func():
     if driver == 'Safari':
         return webdriver.Safari()
@@ -39,15 +38,16 @@ def driver_func():
         # ie, firefox, chrome need more parameters
         if driver == 'Ie':
             return webdriver.Ie(driver_path)
+        # Firefox & Chrome
+        headless = bool(CONFIG.get('UI', 'HEADLESS').upper() == 'Y')
         if driver == 'Firefox':
+            options = webdriver.FirefoxOptions()
+            options.set_headless(headless)
             return webdriver.Firefox(
-                executable_path=driver_path, log_path=None)
+                executable_path=driver_path, firefox_options=options, log_path='geckodriver.log')
         if driver == 'Chrome':
-            options = None
-            if CONFIG.get('UI', 'HEADLESS').upper() == 'Y':
-                options = webdriver.ChromeOptions()
-                options.add_argument('headless')
-                options.add_argument(CONFIG.get('UI', 'HEADLESS_WINDOW_SIZE').lower())
+            options = webdriver.ChromeOptions()
+            options.set_headless(headless)
             return webdriver.Chrome(executable_path=driver_path, chrome_options=options)
 
 
