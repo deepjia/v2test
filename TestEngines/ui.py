@@ -100,6 +100,12 @@ class Test:
             else:
                 return self.driver.close()
 
+        elif action == 'switch_to':
+            if value:
+                self.driver.switch_to.frame(value)
+            else:
+                self.driver.switch_to.frame(self.elem)
+
         elif action == 'type':
             self.elem.clear()
             return self.elem.send_keys(value)
