@@ -12,7 +12,7 @@ import TestEngines.locust
 from datetime import datetime
 from TestEngines.config import *
 from TestEngines.excel import *
-from TestEngines.ddt import *
+from ddt import *
 
 
 COL_RUN_RESULT = 10
