@@ -7,12 +7,12 @@ python:
   #- 3.4
   - 3.5
   - 3.6
-before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
+#before_script:
+#  - "export DISPLAY=:99.0"
+#  - "sh -e /etc/init.d/xvfb start"
+#  - sleep 3 # give xvfb some time to start
 addons:
   chrome: stable
 install: pip install -r requirements.txt
 script:
-    - ./run.py
+    - xvfb-run ./run.py
