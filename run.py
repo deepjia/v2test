@@ -22,6 +22,7 @@ LEN_MSG = int(CONFIG.get('MAIN', 'LEN_MSG'))
 
 saved_elements = {}
 logics_all = {}
+models_all = {}
 check = {'equal': 'assertEqual',
          '!equal': 'assertNotEqual',
          'in': 'assertIn',
@@ -39,8 +40,10 @@ case_files = [x.path for x in os.scandir(CASE_DIR) if x.is_file()
 cases_all = (case for file in case_files
              for case in ReadAndFormatExcel(file).cases)
 
-for file in case_files: logics_all.update(ReadAndFormatExcel(file).logics)
-
+for file in case_files:
+    file_obj = ReadAndFormatExcel(file)
+    logics_all.update(file_obj.logics)
+    models_all.update(file_obj.models)
 
 @ddt
 class RunTest(unittest.TestCase):
@@ -61,6 +64,10 @@ class RunTest(unittest.TestCase):
                 if locator == 'saved':
                     logging.info('[Step] {Element} Saved = ' + location)
                     locator, location = saved_elements[location]
+                if locator == 'model':
+                    logging.info('[Step] {Element} Model = ' + location)
+                    location_name, location_arg = location.split('.')
+                    locator, location = models_all[location_name][location_arg]
                 # other locator powered by engines
                 logging.info('[Step] {Element} ' + self.run.locator_log(
                     locator, location, action, value))

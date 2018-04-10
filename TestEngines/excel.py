@@ -16,6 +16,7 @@ class ReadAndFormatExcel:
     def __init__(self, file):
         self.cases = []
         self.logics = {}
+        self.models = {}
         self.valid_rows = []
         self.file = file
         self.excel = openpyxl.load_workbook(self.file)
@@ -62,6 +63,8 @@ class ReadAndFormatExcel:
             if i == sheet.max_row or sheet.cell(row=i + 1, column=2).value:
                 if run_flag == 'y':
                     self.cases.append(self.valid_rows)
-                else:
+                elif run_flag == 'logic':
                     self.logics[self.valid_rows[0][1]] = self.valid_rows
+                elif run_flag == 'model':
+                    self.models[self.valid_rows[0][1]] = {x[8]:(x[5],x[6]) for x in self.valid_rows}
                 self.valid_rows = []
