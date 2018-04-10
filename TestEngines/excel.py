@@ -15,6 +15,7 @@ def write_excel(file, result):
 class ReadAndFormatExcel:
     def __init__(self, file):
         self.cases = []
+        self.logics = {}
         self.valid_rows = []
         self.file = file
         self.excel = openpyxl.load_workbook(self.file)
@@ -34,17 +35,15 @@ class ReadAndFormatExcel:
                     top=Side(border_style='thin', color="FF000000")
                 )
                 # Y, case to run
-                if sheet.cell(row=i, column=1).value.lower() == 'y':
-                    run_flag = 1
+                run_flag = sheet.cell(row=i, column=1).value.lower() or 'n'
                 # N, case not to run
-                else:
-                    run_flag = 0
+                if run_flag == 'n':
                     continue
             else:
                 # no case_id, no top border
                 border = Border(top=Side(border_style=None, color=None))
                 # no case_id, and not belong to a case that is to run
-                if run_flag == 0:
+                if run_flag == 'n':
                     continue
 
             # set boarders for all cells
@@ -61,5 +60,8 @@ class ReadAndFormatExcel:
             )
 
             if i == sheet.max_row or sheet.cell(row=i + 1, column=2).value:
-                self.cases.append(self.valid_rows)
+                if run_flag == 'y':
+                    self.cases.append(self.valid_rows)
+                else:
+                    self.logics[self.valid_rows[0][1]] = self.valid_rows
                 self.valid_rows = []
