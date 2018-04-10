@@ -25,7 +25,7 @@ check = {'equal': 'assertEqual',
          '!equal': 'assertNotEqual',
          'in': 'assertIn',
          '!in': 'assertNotIn',
-         'log':''}
+         'log': ''}
 
 logging.basicConfig(
     level=getattr(logging, CONFIG.get('MAIN', 'LOG_LEVEL')),
@@ -54,6 +54,7 @@ class RunTest(unittest.TestCase):
         result = [(sheet_name, case_row, COL_RUN_TIME,
                    str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))]
         i = None
+        response = None
         try:
             # one case: case[line][column]
             self.run = getattr(TestEngines, engine.lower()).Test()

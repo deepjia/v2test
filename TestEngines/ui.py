@@ -80,7 +80,7 @@ class Test:
     def locator_log(locator, location, action, value):
         log = locator + (' = ' if location else '') + location
         # waiting acts when locating.
-        if action == 'waiting':
+        if action == 'within':
             return 'Locate ' + log + ' within ' + value + 's waiting'
         else:
             return log
@@ -106,7 +106,7 @@ class Test:
             else:
                 self.driver.switch_to.frame(self.elem)
 
-        elif action == 'type':
+        elif action == 'input':
             self.elem.clear()
             return self.elem.send_keys(value)
 
