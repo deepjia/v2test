@@ -21,6 +21,7 @@ COL_RUN_ERROR = 12
 LEN_MSG = int(CONFIG.get('MAIN', 'LEN_MSG'))
 
 saved_elements = {}
+saved_vars = {}
 logics_all = {}
 models_all = {}
 check = {'equal': 'assertEqual',
@@ -99,15 +100,20 @@ class RunTest(unittest.TestCase):
                     logging.info('[Step] Call logic ' + value)
                     self.run_lines(logics_all[value])
 
+                # check、log、save_var
                 elif action_name in check:
+                    # extract from response
                     message = str(
                         self.run.check(self.response, *action_args) if action_args
                         else self.response)
+                    # just log
                     if action_name == 'log':
                         logging.info('[Step] Response ' + ' = ' + message)
+                    # save var
                     elif action_name == 'save_var':
                         logging.info('[Step] ' + message + 'saved as var ${' + value + '}')
-                        setattr(self, value, message)
+                        saved_vars[value] = message
+                    # check
                     else:
                         logging.info(
                             '[Step] Check ' + value + ' ' + action + ' '
@@ -118,7 +124,7 @@ class RunTest(unittest.TestCase):
                 # actions by engine
                 else:
                     if value.startswith('${'):
-                        value = getattr(self, value.lstrip('${').rstrip('}'))
+                        value = saved_vars[value.lstrip('${').rstrip('}')]
                     logging.info('[Step] ' + action.title() + ' | ' + value)
                     self.response = self.run.action(
                         value, action_name, *action_args)
