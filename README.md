@@ -29,7 +29,6 @@ Todos:
 * [Engine] Add more actions to Locust load testing engine.
 * [Engine] May add some unit test engine, for example gtest.
 * [Deploy] Docker containerization.
-* [Framework] Support logic.
 * [Framework] Add loop/repeat action. 
 
 It's easy to develop new engines.
@@ -170,11 +169,12 @@ Whether or not the case will be run. Set to ***y*** or ***n*** for the 1st line 
 
 (*Required* for each case)
 
-***Case ID, Case Name***
+***ID, Name***
 
-As it is called.
+Case/Logic/Model ID.
+Case/Logic/Model Name.
 
-(*Required* for each case)
+(*Required* for each case/logic/model)
 
 ***Engine***
 
@@ -212,6 +212,9 @@ You can refer to the examples in `TestCases`, it is easy to understand how to cr
 
 All settings are in `config.ini`.
 
+***logic***
+
+Call logic with the id of *Value*.
 
 ## Usage - UI Engine
 
@@ -261,6 +264,10 @@ Find elements by id, name, xpath etc.
 
 Find previously saved elements. (Saved by the *save* action.)
 
+***model***
+
+Find elements from models.
+
 ### Case - Action
 
 ***open, close***
@@ -278,7 +285,7 @@ Select/Deselect the option by *Key in ('value', 'visible_text', 'index')*
 
 Select/Deselect all when *Key* and *Value* are null.
 
-***waiting***
+***within***
 
 Explicit waits, wait for the element to appear, up to *Value* seconds.
 
