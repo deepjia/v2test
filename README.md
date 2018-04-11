@@ -216,6 +216,10 @@ All settings are in `config.ini`.
 
 Call logic with the id of *Value*.
 
+***save_var***
+
+Save *Value* or last response into var ${value}.
+
 ## Usage - UI Engine
 
 ### Config
@@ -260,9 +264,9 @@ Implicit waits, wait for *Value* seconds before before looking for elements.
 
 Find elements by id, name, xpath etc.
 
-***saved***
+***saved_elem***
 
-Find previously saved elements. (Saved by the *save* action.)
+Find previously saved elements. (Saved by the *save_elem* action.)
 
 ***model***
 
@@ -289,9 +293,9 @@ Select/Deselect all when *Key* and *Value* are null.
 
 Explicit waits, wait for the element to appear, up to *Value* seconds.
 
-***save***
+***save_elem***
 
-Save the element with the name *Value*, in order to be found by locator *saved*.
+Save the element with the name *Value*, in order to be found by locator *saved_elem*.
 
 ***is_displayed, is_enabled, is_selected***
 

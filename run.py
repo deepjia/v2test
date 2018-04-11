@@ -27,6 +27,7 @@ check = {'equal': 'assertEqual',
          '!equal': 'assertNotEqual',
          'in': 'assertIn',
          '!in': 'assertNotIn',
+         'save_var': '',
          'log': ''}
 
 logging.basicConfig(
@@ -45,6 +46,7 @@ for file in case_files:
     logics_all.update(file_obj.logics)
     models_all.update(file_obj.models)
 
+
 @ddt
 class RunTest(unittest.TestCase):
     def setUp(self):
@@ -61,7 +63,7 @@ class RunTest(unittest.TestCase):
             # locate elements or encapsulate params
             if locator:
                 # saved is a locator powered by framework
-                if locator == 'saved':
+                if locator == 'saved_elem':
                     logging.info('[Step] {Element} Saved = ' + location)
                     locator, location = saved_elements[location]
                 if locator == 'model':
@@ -76,7 +78,7 @@ class RunTest(unittest.TestCase):
             if action:
                 action_name, *action_args = action.split('.')
                 # actions by framework
-                if action_name == 'save':
+                if action_name == 'save_elem':
                     if not value:
                         self.fail('This action need a value')
                     logging.info('[Step] Element ' + 'saved to ' + value)
@@ -103,6 +105,9 @@ class RunTest(unittest.TestCase):
                         else self.response)
                     if action_name == 'log':
                         logging.info('[Step] Response ' + ' = ' + message)
+                    elif action_name == 'save_var':
+                        logging.info('[Step] ' + message + 'saved as var ${' + value + '}')
+                        setattr(self, value, message)
                     else:
                         logging.info(
                             '[Step] Check ' + value + ' ' + action + ' '
@@ -112,6 +117,8 @@ class RunTest(unittest.TestCase):
 
                 # actions by engine
                 else:
+                    if value.startswith('${'):
+                        value = getattr(self, value.lstrip('${').rstrip('}'))
                     logging.info('[Step] ' + action.title() + ' | ' + value)
                     self.response = self.run.action(
                         value, action_name, *action_args)
