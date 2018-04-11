@@ -316,6 +316,10 @@ Gets the given property of the element.
 
 Gets the text/tag_name of the element.
 
+***switch_to.Key***
+
+Switch to an element, frame etc.
+
 ## Usage - Appium Engine
 
 ### Config
