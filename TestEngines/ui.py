@@ -101,10 +101,12 @@ class Test:
                 return self.driver.close()
 
         elif action == 'switch_to':
+            if not action_sub:
+                raise ValueError('Action get_attribute need a sub-action.')
             if value:
-                self.driver.switch_to.frame(value)
+                return getattr(self.driver.switch_to, action_sub[0])(value)
             else:
-                self.driver.switch_to.frame(self.elem)
+                return getattr(self.driver.switch_to, action_sub[0])(self.elem)
 
         elif action == 'input':
             self.elem.clear()
