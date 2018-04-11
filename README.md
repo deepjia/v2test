@@ -212,13 +212,15 @@ You can refer to the examples in `TestCases`, it is easy to understand how to cr
 
 All settings are in `config.ini`.
 
+***save_var\[.arg][.arg2]...***
+
+Save the returned value into var ${*Value*}.
+
+*arg* is the attar of the returned value, or method defined in engines.
+
 ***logic***
 
 Call logic with the id of *Value*.
-
-***save_var***
-
-Save *Value* or last response into var ${value}.
 
 ## Usage - UI Engine
 
