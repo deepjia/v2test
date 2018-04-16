@@ -1,2 +1,2 @@
 #!/bin/bash
-FLASK_APP=v2testmgr/v2testmgr.py FLASK_DEBUG=1 flask run
+FLASK_APP=v2testmgr/v2testmgr.py flask run
