@@ -8,7 +8,7 @@
         <div class="form-group row">
             <label for="project" class="col-sm-2 col-form-label">Project*</label>
             <div class="col-sm-5">
-                <input type="text" class="form-control" id="project" name="project" placeholder="Enter Project Name">
+                <input type="text" class="form-control" id="projectname" name="projectname" placeholder="Enter Project Name">
             </div>
         </div>
         <!--TestSuites-->
@@ -41,17 +41,17 @@
                 </div>
             </div>
         </div>
-        <!--EditConfigFile-->
+        <!--Mode-->
         <div class="form-group row">
             <label for="runmode_group" class="col-sm-2 col-form-label">Run Mode</label>
             <div class="col-sm-5">
                 <div class="radio" name='runmode_group'>
                     <label>
-                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="local" checked> Local&nbsp;
+                        <input type="radio" name="mode" id="mode" value="0" checked> Local
                     </label>
-                    <span>  </span>
+                    <span>&nbsp;</span>
                     <label>
-                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1"> Remote: Sender
+                        <input type="radio" name="mode" id="mode" value="1"> Remote: Sender
                     </label>
                 </div>
             </div>

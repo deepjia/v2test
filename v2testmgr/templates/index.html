@@ -23,18 +23,22 @@
             <tr>
                 <th>Proj.</th>
                 <th>Stat.</th>
-                <th>TestSuites</th>
-                <th>TestFiles</th>
-                <th>Reports</th>
+                <th>Mod.</th>
+                <th>Suites.</th>
+                <th>Files.</th>
+                <th>Repts.</th>
                 <th>Ops.</th>
             </tr>
         </thead>
         <tbody>
-            {% for int_projectid, projectname, projectstatus in projects %} {% set projectid = int_projectid.__str__() %}
+            {% for int_projectid, projectname, projectstatus, mode in projects %} {% set projectid = int_projectid.__str__() %}
             <tr>
                 <!--Project Name-->
                 <td>{{ projectname }}</td>
                 <th>{{ projectstatus }}</th>
+                <th>
+                    {% if mode==1 %} Remote {% else %} Local {% endif %}
+                </th>
                 <!--TestSuites-->
                 <th>
                     {% for testsuite in getsuites(userid, projectid) %}
@@ -70,7 +74,7 @@
                     <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
                     {% endif %}
                     <!--Edit Config-->
-                    <a href="{{ url_for('config',projectid=projectid) }}" style="text-decoration:none;">
+                    <a href="{{ url_for('edit',projectid=projectid) }}" style="text-decoration:none;">
                         <span class="glyphicon glyphicon-cog" aria-hidden="true">
                     </a>
                     <!--Delete Project-->

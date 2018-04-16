@@ -114,7 +114,7 @@ def save_files(directory, files):
 def get_projects(userid):
     db = get_db()
     cur = db.execute(
-        'SELECT pid, project, status FROM tb_project WHERE uid=?', [userid])
+        'SELECT pid, project, status, mode FROM tb_project WHERE uid=?', [userid])
     return cur.fetchall()
 
 
@@ -194,12 +194,12 @@ def check_project_info(userid, project, configfiles, testsuites, testfiles, proj
 
 
 # 创建项目
-def create_project(project, userid):
+def create_project(project, userid, mode):
     db = get_db()
     # 建用户
     cur = db.cursor()
-    cur.execute('INSERT INTO tb_project (project, uid) VALUES(?, ?)', [
-        project, userid])
+    cur.execute('INSERT INTO tb_project (project, uid, mode) VALUES(?, ?, ?)', [
+        project, userid, mode])
     projectid = str(cur.lastrowid)
     db.commit()
     os.makedirs(testsuite_dir(userid, projectid))
@@ -209,7 +209,7 @@ def create_project(project, userid):
 
 
 # 项目改名
-def rename_project(projectid, userid, projectname):
+def rename_project(userid, projectid, projectname):
     db = get_db()
     db.execute('UPDATE tb_project SET project=? WHERE uid=? AND pid=?', [projectname, userid, projectid])
     db.commit()
@@ -235,10 +235,10 @@ def getreports(userid, projectid):
                 f.close()
             res.append((reportpath.name, reportcontent.split('<strong>Start Time: </strong>', 1)[1].split(
                 '</p>', 1)[0], reportcontent.split('<strong>Status: </strong>', 1)[1].split('</p>', 1)[0]))
-    return res
+    return sorted(res)
 
 
-def get_projectmode(userid,projectid):
+def get_projectmode(userid, projectid):
     db = get_db()
     cur = db.execute(
         'SELECT mode FROM tb_project WHERE uid=? AND pid=?', [userid, projectid])
@@ -247,12 +247,51 @@ def get_projectmode(userid,projectid):
         # integer 
         return res[0]
 
-def set_projectstatus(userid,projectid,status):
+def set_projectstatus(userid, projectid, status):
     db = get_db()
     db.execute('UPDATE tb_project SET status=? WHERE uid=? AND pid=?', [status, userid, projectid])
     db.commit()
     
 
+def set_projectmode(userid, projectid, mode):
+    db = get_db()
+    db.execute('UPDATE tb_project SET mode=? WHERE uid=? AND pid=?', [mode, userid, projectid])
+    db.commit()
+
+
+def runlocal(userid, projectid):
+    r = subprocess.run([sys.executable, os.path.join(app.root_path,'..','run.py'), userid, projectid], stdout=subprocess.PIPE)
+    if r.returncode:
+        # error
+        set_projectstatus(userid, projectid, 'Failing')
+    else:
+        set_projectstatus(userid, projectid,'Passing')
+
+
+def runremote(userid, projectid):
+    r = subprocess.run([sys.executable, os.path.join(app.root_path,'..','sender.py'), userid, projectid], stdout=subprocess.PIPE)
+    if r.returncode:
+        # error
+        set_projectstatus(userid, projectid, 'Failing')
+    else:
+        set_projectstatus(userid, projectid,'Need confirmation')
+        
+
+# 获取用例文件名
+@app.template_global()
+def getsuites(userid, projectid):
+    path = testsuite_dir(userid, projectid)
+    return (x.name for x in os.scandir(path) if x.is_file()
+            and x.name.endswith(".xlsx") and '~$' not in x.name)
+
+
+# 获取测试文件名
+@app.template_global()
+def getfiles(userid, projectid):
+    path = testfile_dir(userid, projectid)
+    return (x.name for x in os.scandir(path) if x.is_file())
+
+    
 app.secret_key = 'ASDGWErs923#$%^^^^=='
 
 if __name__ == '__main__':

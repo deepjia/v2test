@@ -1,5 +1,5 @@
 {% extends "layout.html" %} {% block title %}
-<title>Config Project</title>
+<title>Edit Project</title>
 {% endblock %} {% block body %}
 
 <div class="container-fluid">
@@ -54,6 +54,21 @@
                 </div>
             </div>
         </div>
+        <!--Mode-->
+        <div class="form-group row">
+            <label for="runmode_group" class="col-sm-2 col-form-label">Run Mode</label>
+            <div class="col-sm-5">
+                <div class="radio" name='runmode_group'>
+                    <label>
+                        <input type="radio" name="mode" id="mode" value="0" {% if mode == 0 %}checked{% endif %}> Local
+                    </label>
+                    <span>&nbsp;</span>
+                    <label>
+                        <input type="radio" name="mode" id="mode" value="1" {% if mode == 1 %}checked{% endif %}> Remote: Sender
+                    </label>
+                </div>
+            </div>
+        </div>
         <div class="form-group row">
             <div class="col-sm-4">
                 <button type="button" class="btn btn-success" onclick="window.location='/'">Cancel</button>
@@ -69,14 +84,14 @@
         $.post("/delete_testsuite", { "projectid": "{{ projectid }}", "filename": filename }, function (result) {
             var resultObj = JSON.parse(result);
             resultObj.projectid = "{{ projectid }}";
-            window.location = '{{ url_for("config") }}?' + $.param(resultObj);
+            window.location = '{{ url_for("edit") }}?' + $.param(resultObj);
         });
     }
     function delete_testfile(filename) {
         $.post("/delete_testfile", { "projectid": "{{ projectid }}", "filename": filename }, function (result) {
             var resultObj = JSON.parse(result);
             resultObj.projectid = "{{ projectid }}";
-            window.location = '{{ url_for("config") }}?' + $.param(resultObj);
+            window.location = '{{ url_for("edit") }}?' + $.param(resultObj);
         });
     }
     function set_textarea(value) {

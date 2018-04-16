@@ -13,21 +13,6 @@ from werkzeug.utils import secure_filename
 from model import *
 
 
-# 获取用例文件名
-@app.template_global()
-def getsuites(userid, projectid):
-    path = testsuite_dir(userid, projectid)
-    return (x.name for x in os.scandir(path) if x.is_file()
-            and x.name.endswith(".xlsx") and '~$' not in x.name)
-
-
-# 获取测试文件名
-@app.template_global()
-def getfiles(userid, projectid):
-    path = testfile_dir(userid, projectid)
-    return (x.name for x in os.scandir(path) if x.is_file())
-
-
 # 首页（项目页面）
 @app.route('/')
 @app.route('/index')
@@ -95,8 +80,8 @@ def logout():
 
 
 # 配置
-@app.route('/config', methods=['GET', 'POST'])
-def config():
+@app.route('/edit', methods=['GET', 'POST'])
+def edit():
     userid = session['userid']
     projectid = request.args.get('projectid')
     info = request.args.get('info')
@@ -109,10 +94,12 @@ def config():
         testsuites = request.files.getlist('testsuites')
         testfiles = request.files.getlist('testfiles')
         projectname = request.form['projectname']
+        mode = request.form['mode']
         error = check_project_info(
             userid, projectname, configfiles, testsuites, testfiles, projectid)
         if error is None:
-            rename_project(projectid, userid, projectname)
+            rename_project(userid, projectid, projectname)
+            set_projectmode(userid, projectid, mode)
             if configfiles:
                 save_files(project_dir(userid, projectid), configfiles)
             else:
@@ -126,8 +113,9 @@ def config():
     with open(config_path, 'r') as f:
         configcontent = f.read()
         f.close()
-    return render_template('config.html', userid=userid, projectid=projectid, projectname=projectname,
-                           configcontent=configcontent, info=info, error=error)
+    mode = get_projectmode(userid, projectid)
+    return render_template('edit.html', userid=userid, projectid=projectid, projectname=projectname,
+                           configcontent=configcontent, info=info, error=error, mode=mode)
 
 
 @app.route('/dl_testsuite')
@@ -206,11 +194,12 @@ def add():
         configfiles = request.files.getlist('configfile')
         testsuites = request.files.getlist('testsuites')
         testfiles = request.files.getlist('testfiles')
-        project = request.form['project']
+        projectname = request.form['projectname']
+        mode = request.form['mode']
         error = check_project_info(
-            userid, project, configfiles, testsuites, testfiles)
+            userid, projectname, configfiles, testsuites, testfiles)
         if error is None:
-            projectid = create_project(project, userid)
+            projectid = create_project(projectname, userid, mode)
             config_path = os.path.join(
                 project_dir(userid, projectid), 'config.ini')
             if configfiles:
@@ -304,24 +293,6 @@ def run():
     res['info'] = 'Project start running'
     set_projectstatus(userid,projectid,'Running')
     return json.dumps(res)
-
-
-def runlocal(userid, projectid):
-    r = subprocess.run([sys.executable, '../run.py', userid, projectid], stdout=subprocess.PIPE)
-    if r.returncode:
-        # error
-        set_projectstatus(userid, projectid, 'Failing')
-    else:
-        set_projectstatus(userid, projectid,'Passing')
-
-
-def runremote(userid, projectid):
-    r = subprocess.run([sys.executable, '../run.py', userid, projectid], stdout=subprocess.PIPE)
-    if r.returncode:
-        # error
-        set_projectstatus(userid, projectid, 'Failing')
-    else:
-        set_projectstatus(userid, projectid,'Need confirmation')
 
 
 if __name__ == '__main__':
