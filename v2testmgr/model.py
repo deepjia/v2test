@@ -228,12 +228,12 @@ def rm_project(projectid, userid):
 def getreports(userid, projectid):
     res = []
     path = testreport_dir(userid, projectid)
-    for reportpath in os.scandir(path):
-        if reportpath.is_file() and reportpath.name.endswith(".html"):
-            with open(reportpath, 'r') as f:
+    for reportfile in os.scandir(path):
+        if reportfile.is_file() and reportfile.name.endswith(".html"):
+            with open(reportfile.path, 'r') as f:
                 reportcontent = f.read()
                 f.close()
-            res.append((reportpath.name, reportcontent.split('<strong>Start Time: </strong>', 1)[1].split(
+            res.append((reportfile.name, reportcontent.split('<strong>Start Time: </strong>', 1)[1].split(
                 '</p>', 1)[0], reportcontent.split('<strong>Status: </strong>', 1)[1].split('</p>', 1)[0]))
     return sorted(res, reverse=True)
 
