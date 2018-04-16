@@ -1,0 +1,69 @@
+{% extends "layout.html" %} {% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <!--返回-->
+            <button type="button" class="btn btn-primary" onclick=window.location='{{ url_for("index") }}'>
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back
+            </button>
+            <!--下载
+            <button type="button" class="btn btn-primary">
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Download All
+            </button>
+            -->
+            <!--刷新-->
+            <button type="button" class="btn btn-primary" onclick=window.location='{{ url_for("reports",projectid=projectid) }}'>
+                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh
+            </button>
+        </div>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Proj.</th>
+                <th>Report</th>
+                <th>Start Time</th>
+                <th>Status</th>
+                <th>Ops.</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report, starttime, status in reports %}
+            <tr>
+                <!--Proj.-->
+                <td>{{ projectname }}</td>
+                <!--Report-->
+                <th>
+                    <a href="{{ url_for('report', projectid=projectid, report=report) }}">{{ report }}</a>
+                </th>
+                <!--Start Time-->
+                <th>{{ starttime }}</th>
+                <!--Status-->
+                <th>{{ status }}</th>
+                <!--Ops.-->
+                <th>
+                    <!--下载-->
+                    <a href="#" style="text-decoration:none;" onclick=window.location="{{ url_for('dl_testreport', projectid=projectid, filename=report) }}">
+                        <span class="glyphicon glyphicon-download-alt" aria-hidden="true">
+                    </a>
+                    <!--删除-->
+                    <a href="#" style="text-decoration:none;" onclick="delete_testreport( '{{ report }}')">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true">
+                    </a>
+                </th>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    function delete_testreport(filename) {
+        $.post("/delete_testreport", { 'projectid': '{{ projectid }}', 'filename': filename }, function (result) {
+            var resultObj = JSON.parse(result);
+            resultObj.projectid = "{{ projectid }}";
+            window.location = '{{ url_for("reports") }}?' + $.param(resultObj);
+        });
+    }
+</script> {% endblock %}

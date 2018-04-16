@@ -171,5 +171,6 @@ class RunTest(unittest.TestCase):
 if __name__ == '__main__':
     print('Loading cases...\n' + '-' * 70)
     print('\n'.join(case_files))
+    del sys.argv[1:]
     unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(
         output=REPORT_DIR, report_title='V2Test Report'))

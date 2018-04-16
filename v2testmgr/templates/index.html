@@ -1,0 +1,97 @@
+{% extends "layout.html" %} {% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-11">
+            <!--首页-->
+            <button type="button" class="btn btn-primary" onclick=window.location='{{ url_for("add") }}'>
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
+            </button>
+            <!--模版-->
+            <button type="button" class="btn btn-primary" onclick=window.location='{{ url_for("dl_template") }}'>
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Template
+            </button>
+            <!--刷新-->
+            <button type="button" class="btn btn-primary" onclick=window.location='{{ url_for("index") }}'>
+                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh
+            </button>
+        </div>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Proj.</th>
+                <th>Stat.</th>
+                <th>TestSuites</th>
+                <th>TestFiles</th>
+                <th>Reports</th>
+                <th>Ops.</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for int_projectid, projectname, projectstatus in projects %} {% set projectid = int_projectid.__str__() %}
+            <tr>
+                <!--Project Name-->
+                <td>{{ projectname }}</td>
+                <th>{{ projectstatus }}</th>
+                <!--TestSuites-->
+                <th>
+                    {% for testsuite in getsuites(userid, projectid) %}
+                    <div>{{ testsuite }}
+                        <a href="{{ url_for('dl_testsuite', projectid=projectid, filename=testsuite) }}">
+
+                            <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </th>
+                <!--TestFiles-->
+                <th>
+                    {% for testfile in getfiles(userid, projectid) %}
+                    <div>{{ testfile }}
+                        <a href="{{ url_for('dl_testfile', projectid=projectid, filename=testfile) }}">
+                            <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </th>
+                <!--TestReports-->
+                <th>
+                    <a href="{{ url_for('reports',projectid=projectid) }}">View</a>
+                </th>
+                <th>
+                    <!--Run-->
+                    {% if projectstatus!='Running' %}
+                    <a href="#" style="text-decoration:none;" onclick="run('{{ projectid }}')">
+                        <span class="glyphicon glyphicon-play" aria-hidden="true">
+                    </a>
+                    {% else %}
+                    <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                    {% endif %}
+                    <!--Edit Config-->
+                    <a href="{{ url_for('config',projectid=projectid) }}" style="text-decoration:none;">
+                        <span class="glyphicon glyphicon-cog" aria-hidden="true">
+                    </a>
+                    <!--Delete Project-->
+                    <a href="#" style="text-decoration:none;" onclick="delete_project('{{ projectid }}')">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true">
+                    </a>
+                </th>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    function delete_project(projectid) {
+        $.post("/delete_project", { 'projectid': projectid }, function (result) {
+            window.location = '{{ url_for("index") }}?' + $.param(JSON.parse(result));
+        });
+    }
+    function run(projectid) {
+        $.post("/run", { 'projectid': projectid }, function (result) {
+            window.location = '{{ url_for("index") }}?' + $.param(JSON.parse(result));
+        });
+    }
+</script> {% endblock %}

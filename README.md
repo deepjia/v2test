@@ -97,7 +97,7 @@ Test report will be generated in `TestReports`, and send back to sender.
 ### Sender
 
 ```
-./receiver.py
+./sender.py
 ```
 Send cases in `RemoteReport/ReceiverName` to receivers and reports will be gathered in `RemoteReports`.
 

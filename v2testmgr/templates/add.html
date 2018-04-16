@@ -1,0 +1,76 @@
+{% extends "layout.html" %} {% block title %}
+<title>Add Project</title>
+{% endblock %} {% block body %}
+
+<div class="container-fluid">
+    <form class="main" action="" method="post" enctype=multipart/form-data>
+        <!--Project Name-->
+        <div class="form-group row">
+            <label for="project" class="col-sm-2 col-form-label">Project*</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="project" name="project" placeholder="Enter Project Name">
+            </div>
+        </div>
+        <!--TestSuites-->
+        <div class="form-group row">
+            <label for="testsuites" class="col-sm-2 col-form-label">TestSuites</label>
+            <div class="col-sm-5">
+                <input type="file" multiple="" class="form-control" name=testsuites>
+            </div>
+        </div>
+        <!--TestFiles-->
+        <div class="form-group row">
+            <label for="testfiles" class="col-sm-2 col-form-label">TestFiles</label>
+            <div class="col-sm-5">
+                <input type="file" multiple="" class="form-control" name=testfiles>
+            </div>
+        </div>
+        <!--ConfigFile-->
+        <div class="form-group row">
+            <label for="configfile" class="col-sm-2 col-form-label">Config</label>
+            <div class="col-sm-5">
+                <input type=file class="form-control" name=configfile onchange="set_textarea(this.value)">
+            </div>
+        </div>
+        <!--EditConfigFile-->
+        <div class="form-group row">
+            <label for="configcontent" class="col-sm-2 col-form-label">Edit Config</label>
+            <div class="col-sm-5">
+                <div id="configcontentdiv" class="form-check">
+                    <textarea class="form-control" rows="13" id="configcontent" name="configcontent">{{ configcontent }}</textarea>
+                </div>
+            </div>
+        </div>
+        <!--EditConfigFile-->
+        <div class="form-group row">
+            <label for="runmode_group" class="col-sm-2 col-form-label">Run Mode</label>
+            <div class="col-sm-5">
+                <div class="radio" name='runmode_group'>
+                    <label>
+                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="local" checked> Local&nbsp;
+                    </label>
+                    <span>  </span>
+                    <label>
+                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1"> Remote: Sender
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-success" onclick="window.location='/'">Cancel</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    function set_textarea(value) {
+        var elem = document.getElementById('configcontent');
+        if (value == '') {
+            elem.readOnly = false
+        } else {
+            elem.readOnly = true
+        }
+    }
+</script> {% endblock %}
