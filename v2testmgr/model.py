@@ -235,7 +235,7 @@ def getreports(userid, projectid):
                 f.close()
             res.append((reportpath.name, reportcontent.split('<strong>Start Time: </strong>', 1)[1].split(
                 '</p>', 1)[0], reportcontent.split('<strong>Status: </strong>', 1)[1].split('</p>', 1)[0]))
-    return sorted(res)
+    return sorted(res, reverse=True)
 
 
 def get_projectmode(userid, projectid):
