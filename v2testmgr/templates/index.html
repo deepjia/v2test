@@ -35,7 +35,10 @@
             <tr>
                 <!--Project Name-->
                 <td>{{ projectname }}</td>
-                <th>{{ projectstatus }}</th>
+                <th {% if projectstatus=='Passing' %} style="color: #5cb85c" {% endif %} {% if projectstatus=='Failing' %} style="color: #d9534f"
+                    {% endif %}>
+                    {{ projectstatus }}
+                </th>
                 <th>
                     {% if mode==1 %} Remote {% else %} Local {% endif %}
                 </th>
