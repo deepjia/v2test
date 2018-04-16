@@ -27,7 +27,7 @@ else:
     FILE_DIR = os.path.join(DIR, 'TestFiles')
     REPORT_DIR = os.path.join(DIR, 'TestReports')
     REMOTE_CASE_DIR = os.path.join(DIR, 'RemoteSuites')
-    REMOTE_FILE_DIR = os.path.join(TEST_DIR, 'RemoteFiles')
+    REMOTE_FILE_DIR = os.path.join(DIR, 'RemoteFiles')
     REMOTE_REPORT_DIR = os.path.join(DIR, 'RemoteReports')
     CONFIG_FILE = os.path.join(DIR, 'config.ini')
 ENGINE_DIR = os.path.join(DIR, 'TestEngines')
