@@ -1,6 +1,4 @@
-{% extends "layout.html" %} {% block title %}
-<title>Add Project</title>
-{% endblock %} {% block body %}
+{% extends "layout.html" %} {% block title %}Add Project {% endblock %} {% block page_content %}
 
 <div class="container-fluid">
     <form class="main" action="" method="post" enctype=multipart/form-data>
@@ -56,6 +54,7 @@
                 </div>
             </div>
         </div>
+        <!--Submit-->
         <div class="form-group row">
             <div class="col-sm-4">
                 <button type="button" class="btn btn-success" onclick="window.location='/'">Cancel</button>
@@ -64,6 +63,7 @@
         </div>
     </form>
 </div>
+{% endblock %} {% block scripts %} {{ super() }}
 <script>
     function set_textarea(value) {
         var elem = document.getElementById('configcontent');
@@ -73,4 +73,4 @@
             elem.readOnly = true
         }
     }
-</script> {% endblock %}
+</script>{% endblock %}

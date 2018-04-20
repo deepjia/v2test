@@ -1,4 +1,4 @@
-{% extends "layout.html" %} {% block body %}
+{% extends "layout.html" %} {% block page_content %}
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-11">
@@ -16,8 +16,6 @@
             </button>
         </div>
     </div>
-
-
     <table class="table">
         <thead>
             <tr>
@@ -90,6 +88,7 @@
         </tbody>
     </table>
 </div>
+{% endblock %} {% block scripts %} {{ super() }}
 <script>
     function delete_project(projectid) {
         $.post("/delete_project", { 'projectid': projectid }, function (result) {

@@ -9,6 +9,7 @@ import subprocess
 from flask import Flask, request, render_template, g, session, redirect, \
     url_for, make_response, escape, send_from_directory
 from werkzeug.utils import secure_filename
+from flask_bootstrap import Bootstrap
 
 
 TESTSUITE_DIR = 'TestSuites'
@@ -20,6 +21,7 @@ TEMPLATE_NAME = 'template.zip'
 
 
 app = Flask(__name__)
+Bootstrap(app)
 app.config.from_object(__name__)
 
 app.config.update(dict(

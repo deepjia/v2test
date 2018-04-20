@@ -1,6 +1,4 @@
-{% extends "layout.html" %} {% block title %}
-<title>Edit Project</title>
-{% endblock %} {% block body %}
+{% extends "layout.html" %} {% block title %} Edit Project {% endblock %} {% block page_content %}
 
 <div class="container-fluid">
     <form class="main" action="" method="post" enctype=multipart/form-data>
@@ -60,15 +58,16 @@
             <div class="col-sm-5">
                 <div class="radio" name='runmode_group'>
                     <label>
-                        <input type="radio" name="mode" id="mode" value="0" {% if mode == 0 %}checked{% endif %}> Local
+                        <input type="radio" name="mode" id="mode" value="0" {% if mode==0 %}checked{% endif %}> Local
                     </label>
                     <span>&nbsp;</span>
                     <label>
-                        <input type="radio" name="mode" id="mode" value="1" {% if mode == 1 %}checked{% endif %}> Remote: Sender
+                        <input type="radio" name="mode" id="mode" value="1" {% if mode==1 %}checked{% endif %}> Remote: Sender
                     </label>
                 </div>
             </div>
         </div>
+        <!--Submit-->
         <div class="form-group row">
             <div class="col-sm-4">
                 <button type="button" class="btn btn-success" onclick="window.location='/'">Cancel</button>
@@ -79,6 +78,7 @@
 
 </form>
 </div>
+{% endblock %} {% block scripts %} {{ super() }}
 <script>
     function delete_testsuite(filename) {
         $.post("/delete_testsuite", { "projectid": "{{ projectid }}", "filename": filename }, function (result) {
