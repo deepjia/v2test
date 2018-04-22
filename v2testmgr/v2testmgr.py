@@ -8,9 +8,44 @@ import sys
 import subprocess
 from multiprocessing import Process
 from flask import Flask, request, render_template, g, session, redirect, \
-    url_for, make_response, escape, send_from_directory
+    url_for, make_response, escape, send_from_directory, flash, jsonify
 from werkzeug.utils import secure_filename
 from model import *
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, TextField, PasswordField, RadioField, FileField, TextAreaField, RadioField
+from wtforms.validators import InputRequired, EqualTo, Length
+
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[
+                           InputRequired(message='Username required')])
+    password = PasswordField('Password', validators=[
+                             InputRequired(message='Password required')])
+    submit = SubmitField('Login')
+    reg = SubmitField('Register')
+
+
+class RegForm(FlaskForm):
+    username = StringField('Username', validators=[InputRequired(
+        message='Username required'), Length(min=4, max=25, message='Username should be 4-25 chars')])
+    password = PasswordField('Password', validators=[InputRequired(
+        message='Password required'), Length(min=8, max=30, message='Password should be 8-30 chars')])
+    confirm = PasswordField('Confirm Password', validators=[InputRequired(
+        message='Please confirm password'), EqualTo('password', message='Passwords mismatch')])
+    submit = SubmitField('Register')
+    login = SubmitField('Login')
+
+
+class ProjectForm(FlaskForm):
+    projectname = StringField('Project Name', validators=[InputRequired(
+        message='Project name required'), Length(min=4, max=25, message='Project name should be 4-25 chars')])
+    testsuites = FileField('TestSuites')
+    testfiles = FileField('TestFiles')
+    configfile = FileField('Config File')
+    configcontent = TextAreaField('Edit Config')
+    mode = RadioField('Run Mode',choices=[('0','Local'),('1','Remote')])
+    submit = SubmitField('Submit')
+    cancel = SubmitField('Cancel')
 
 
 # 首页（项目页面）
@@ -20,10 +55,8 @@ def index():
     if 'username' in session:
         userid = session['userid']
         username = session['username']
-        info = request.args.get('info')
-        error = request.args.get('error')
         resp = make_response(render_template(
-            'index.html', userid=userid, username=username, projects=get_projects(userid), info=info, error=error))
+            'index.html', userid=userid, username=username, projects=get_projects(userid)))
         resp.set_cookie('username', username)
         return resp
     return redirect(url_for("login"))
@@ -32,43 +65,51 @@ def index():
 # 登录
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    error = None
+    form = LoginForm()
     if request.method == 'POST':
-        username = request.form['username']
-        userid = valid_login(username, request.form['password'])
-        if userid is not None:
-            return log_user_in(userid, username)
+        username = form.username.data
+        if not form.validate_on_submit():
+            for field in form.errors:
+                for error in form.errors[field]:
+                    flash(error, category='error')
         else:
-            error = 'Invalid username/password'
+            userid = valid_login(username, form.password.data)
+            if userid is not None:
+                return log_user_in(userid, username)
+            else:
+                flash('Invalid username/password', category='error')
+        resp = make_response(redirect(url_for('login')))
+        resp.set_cookie('username', username)
+        return resp
     elif 'userid' in session:
         return redirect(url_for("index"))
-    return render_template('login.html', error=error, lastusername=request.cookies.get('username'))
+    else:
+        form.username.data = request.cookies.get('username')
+        return render_template('login.html', form=form)
 
 
 # 注册
 @app.route('/reg', methods=['GET', 'POST'])
 def reg():
-    error = None
+    form = RegForm()
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        password2 = request.form['password2']
-        if not username:
-            error = "Username required"
-        elif not password:
-            error = "Password required"
+        username = form.username.data
+        if not form.validate_on_submit():
+            for field in form.errors:
+                for error in form.errors[field]:
+                    flash(error, category='error')
         # 验重
         elif get_userid(username):
-            error = "User exists"
-        elif password != password2:
-            error = "Passwords did not match"
+            flash("User exists", category='error')
+        # 创建用户
         else:
-            # 创建用户
-            create_user(username, request.form['password'])
+            create_user(username, form.password.data)
             userid = get_userid(username)
             # 登入
             return log_user_in(userid, username)
-    return render_template('reg.html', error=error)
+        return redirect(url_for('reg'))
+    else:
+        return render_template('reg.html', form=RegForm())
 
 
 # 登出
@@ -82,40 +123,78 @@ def logout():
 # 配置
 @app.route('/edit', methods=['GET', 'POST'])
 def edit():
+    form = ProjectForm()
     userid = session['userid']
     projectid = request.args.get('projectid')
-    info = request.args.get('info')
-    error = request.args.get('error')
     config_path = os.path.join(
         app.root_path, 'user', userid, projectid, 'config.ini')
     if request.method == 'POST':
-        configcontent = request.form['configcontent']
-        configfiles = request.files.getlist('configfile')
-        testsuites = request.files.getlist('testsuites')
-        testfiles = request.files.getlist('testfiles')
-        projectname = request.form['projectname']
-        mode = request.form['mode']
-        error = check_project_info(
-            userid, projectname, configfiles, testsuites, testfiles, projectid)
-        if error is None:
-            rename_project(userid, projectid, projectname)
-            set_projectmode(userid, projectid, mode)
-            if configfiles:
-                save_files(project_dir(userid, projectid), configfiles)
+        # 项目校验 #
+        if not check_project_info(userid, form, projectid):
+            return redirect(url_for('edit', projectid=projectid))
+        # 修改项目
+        else:
+            # 项目改名
+            rename_project(userid, projectid, form.projectname.data)
+            # 修改模式
+            set_projectmode(userid, projectid, form.mode.data)
+            # 替换配置文件
+            if form.configfile.data:
+                save_files(project_dir(userid, projectid), form.configfile.data)
+            # 编辑配置文件
             else:
                 with open(config_path, 'w') as f:
-                    f.write(configcontent.replace('\r', ''))
+                    f.write(form.configcontent.data.replace('\r', ''))
                     f.close()
-            save_files(testsuite_dir(userid, projectid), testsuites,)
-            save_files(testfile_dir(userid, projectid), testfiles)
-            return redirect(url_for("index", info="Project edited"))
-    projectname = get_projectname(userid, projectid)
-    with open(config_path, 'r') as f:
-        configcontent = f.read()
-        f.close()
-    mode = get_projectmode(userid, projectid)
-    return render_template('edit.html', userid=userid, projectid=projectid, projectname=projectname,
-                           configcontent=configcontent, info=info, error=error, mode=mode)
+            # 增加测试套
+            save_files(testsuite_dir(userid, projectid), *form.testsuites.raw_data)
+            # 增加测试文件
+            save_files(testfile_dir(userid, projectid), *form.testfiles.raw_data)
+            flash('Project edited', category='info')
+            return redirect(url_for("index"))
+    # GET 请求
+    else:
+        with open(config_path, 'r') as f:
+            form.configcontent.data = f.read()
+            f.close()
+        form.mode.data = str(get_projectmode(userid, projectid))
+        form.projectname.data = get_projectname(userid, projectid)
+        return render_template('edit.html', userid=userid, projectid=projectid, form=form)
+
+
+# 添加项目
+@app.route('/add', methods=['GET', 'POST'])
+def add():
+    form = ProjectForm()
+    userid = session['userid']
+    if request.method == 'POST':
+        # 项目校验 #
+        if check_project_info(userid, form):
+            projectid = create_project(form.projectname.data, userid, form.mode.data)
+            config_path = os.path.join(
+                project_dir(userid, projectid), 'config.ini')
+            # 保存配置文件
+            if form.configfile.data:
+                save_files(project_dir(userid, projectid), form.configfile.data)
+            # 无配置文件时，加载默认模版，并按需修改
+            else:
+                shutil.copy(app.config['TEMPLATE_CONFIG'], config_path)
+                configcontent = form.configcontent.data
+                if configcontent:
+                    with open(config_path, 'w') as f:
+                        f.write(configcontent.replace('\r', ''))
+                        f.close()
+            # 保存测试套
+            save_files(testsuite_dir(userid, projectid), *form.testsuites.raw_data)
+            # 保存测试文件
+            save_files(testfile_dir(userid, projectid), *form.testfiles.raw_data)
+            flash('Project added', category='info')
+            return redirect(url_for("index"))
+        else:
+            return redirect(url_for("add"))
+    else:
+        form.mode.data = '0'
+        return render_template('add.html', form=form)
 
 
 @app.route('/dl_testsuite')
@@ -154,18 +233,16 @@ def dl_testreport():
     directory = os.path.join(
         app.root_path, 'user', userid, projectid, TESTREPORT_DIR)
     return send_from_directory(directory, filename, as_attachment=True)
-    
+
 
 # 报告列表
 @app.route('/reports')
 def reports():
-    info = request.args.get('info')
-    error = request.args.get('error')
     userid = session['userid']
     projectid = request.args.get('projectid')
     testreports = getreports(userid, projectid)
     return render_template('reports.html', reports=testreports, projectid=projectid,
-                           projectname=get_projectname(userid, projectid), error=error, info=info)
+                           projectname=get_projectname(userid, projectid))
 
 
 # 报告
@@ -179,120 +256,91 @@ def report():
     with open(reportpath, 'r') as f:
         reportcontent = f.read()
         f.close()
-    reportcontent = reportcontent.split('<body>', 1)[1].rsplit('</body>', 1)[0].replace('V2Test Report', testreport)
+    reportcontent = reportcontent.split('<body>', 1)[1].rsplit(
+        '</body>', 1)[0].replace('V2Test Report', testreport)
     return render_template('report.html', report=testreport, reportcontent=reportcontent, projectid=projectid)
-
-
-# 添加项目
-@app.route('/add', methods=['GET', 'POST'])
-def add():
-    # error = request.args.get('error')
-    error = None
-    userid = session['userid']
-    if request.method == 'POST':
-        configcontent = request.form['configcontent']
-        configfiles = request.files.getlist('configfile')
-        testsuites = request.files.getlist('testsuites')
-        testfiles = request.files.getlist('testfiles')
-        projectname = request.form['projectname']
-        mode = request.form['mode']
-        error = check_project_info(
-            userid, projectname, configfiles, testsuites, testfiles)
-        if error is None:
-            projectid = create_project(projectname, userid, mode)
-            config_path = os.path.join(
-                project_dir(userid, projectid), 'config.ini')
-            if configfiles:
-                save_files(project_dir(userid, projectid), configfiles)
-            else:
-                shutil.copy(app.config['TEMPLATE_CONFIG'], config_path)
-                if configcontent:
-                    with open(config_path, 'w') as f:
-                        f.write(configcontent.replace('\r', ''))
-                        f.close()
-            save_files(testsuite_dir(userid, projectid), testsuites)
-            save_files(testfile_dir(userid, projectid), testfiles)
-            return redirect(url_for("index", info='Project added'))
-    return render_template('add.html', error=error)
 
 
 # 删除项目
 @app.route('/delete_project', methods=['POST'])
 def delete_project():
-    res = {}
     projectid = request.form['projectid']
     userid = session['userid']
     if project_owner(projectid) == userid:
         rm_project(projectid, userid)
-        res['info'] = 'Project deleted'
+        flash('Project deleted', category='info')
+        return jsonify({'status': 'success'})
     else:
-        res['error'] = 'File not exists or permission deny'
-    return json.dumps(res)
+        flash('Project not exists or permission deny', category='error')
+        return jsonify({'status': 'fail'})
 
 
 @app.route('/delete_testsuite', methods=['POST'])
 def delete_testsuite():
-    res = {}
     projectid = request.form['projectid']
     file_to_del = request.form['filename']
     userid = session['userid']
     if project_owner(projectid) == userid:
         os.remove(os.path.join(testsuite_dir(userid, projectid), file_to_del))
-        res['info'] = 'TestSuite deleted'
+        flash('TestSuite deleted', category='info')
+        return jsonify({'status': 'success'})
     else:
-        res['error'] = 'File not exists or permission deny'
-    return json.dumps(res)
+        flash('File not exists or permission deny', category='error')
+        return jsonify({'status': 'fail'})
 
 
 @app.route('/delete_testfile', methods=['POST'])
 def delete_testfile():
-    res = {}
     projectid = request.form['projectid']
     file_to_del = request.form['filename']
     userid = session['userid']
     if project_owner(projectid) == userid:
         os.remove(os.path.join(testfile_dir(userid, projectid), file_to_del))
-        res['info'] = 'TestFile deleted'
+        flash('TestFile deleted', category='info')
+        return jsonify({'status': 'success'})
     else:
-        res['error'] = 'File not exists or permission deny'
-    return json.dumps(res)
+        flash('File not exists or permission deny', category='error')
+        return jsonify({'status': 'fail'})
 
 
 @app.route('/delete_testreport', methods=['POST'])
 def delete_testreport():
-    res = {}
     projectid = request.form['projectid']
     file_to_del = request.form['filename']
     userid = session['userid']
     if project_owner(projectid) == userid:
         os.remove(os.path.join(testreport_dir(userid, projectid), file_to_del))
-        res['info'] = 'TestReport deleted'
+        flash('TestReport deleted', category='info')
+        return jsonify({'status': 'success'})
     else:
-        res['error'] = 'File not exists or permission deny'
-    return json.dumps(res)
+        flash('File not exists or permission deny', category='error')
+        return jsonify({'status': 'fail'})
 
 
 @app.route('/run', methods=['POST'])
 def run():
-    res = {}
     userid = session['userid']
     projectid = request.form['projectid']
-    mode = get_projectmode(userid,projectid)
+    mode = get_projectmode(userid, projectid)
     shutil.rmtree(runsuite_dir(userid, projectid), ignore_errors=True)
     shutil.rmtree(runfile_dir(userid, projectid), ignore_errors=True)
     if mode == 0:
-        shutil.copytree(testsuite_dir(userid, projectid), runsuite_dir(userid, projectid))
-        shutil.copytree(testfile_dir(userid, projectid), runfile_dir(userid, projectid))
-        p = Process(target=runlocal,args=(userid, projectid))
+        shutil.copytree(testsuite_dir(userid, projectid),
+                        runsuite_dir(userid, projectid))
+        shutil.copytree(testfile_dir(userid, projectid),
+                        runfile_dir(userid, projectid))
+        p = Process(target=runlocal, args=(userid, projectid))
         p.start()
     elif mode == 1:
-        shutil.copytree(testsuite_dir(userid, projectid), os.path.join(runsuite_dir(userid, projectid),'DEFAULT'))
-        shutil.copytree(testfile_dir(userid, projectid), os.path.join(runfile_dir(userid, projectid),'DEFAULT'))
-        p = Process(target=runremote,args=(userid, projectid))
+        shutil.copytree(testsuite_dir(userid, projectid), os.path.join(
+            runsuite_dir(userid, projectid), 'DEFAULT'))
+        shutil.copytree(testfile_dir(userid, projectid), os.path.join(
+            runfile_dir(userid, projectid), 'DEFAULT'))
+        p = Process(target=runremote, args=(userid, projectid))
         p.start()
-    res['info'] = 'Project start running'
-    set_projectstatus(userid,projectid,'Running')
-    return json.dumps(res)
+    set_projectstatus(userid, projectid, 'Running')
+    flash('Project start running', category='info')
+    return jsonify({'status': 'success'})
 
 
 @app.errorhandler(404)

@@ -1,98 +1,83 @@
-{% extends "layout.html" %} {% block title %} Edit Project {% endblock %} {% block page_content %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "layout.html" %}
+{% block title %}Edit Project{% endblock %}
+{% block page_content %}
 
 <div class="container-fluid">
-    <form class="main" action="" method="post" enctype=multipart/form-data>
-        <!--Project Name-->
-        <div class="form-group row">
-            <label for="project" class="col-sm-2 col-form-label">Project*</label>
-            <div class="col-sm-5">
-                <input type="text" class="form-control" id="projectname" name="projectname" value="{{ projectname }}">
-            </div>
-        </div>
+    <form class="form form-horizontal" method="post" enctype=multipart/form-data>
+        {{ form.csrf_token }}
+
+        <!--Projectname-->
+        {{ wtf.form_field(form.projectname, form_type="horizontal", horizontal_columns=('sm', 2, 5)) }}
+
         <!--TestSuites-->
-        <div class="form-group row">
-            <label for="testsuites" class="col-sm-2 col-form-label">TestSuites</label>
-            <div class="col-sm-5">
+        <div class="form-group ">
+            <label class="control-label col-sm-2" for="testsuites">TestSuites</label>
+            <div class=" col-sm-5">
                 {% for testsuite in getsuites(userid, projectid) %}
                 <span>{{ testsuite }}</span>
                 <a href="#" style="text-decoration:none;" onclick="delete_testsuite('{{ testsuite }}')">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true">
                 </a>
                 {% endfor %}
-                <input type="file" multiple="" class="form-control" name="testsuites">
+                {{ form.testsuites(multiple="", class="form-control") }}
             </div>
         </div>
+
         <!--TestFiles-->
-        <div class="form-group row">
-            <label for="testfiles" class="col-sm-2 col-form-label">TestFiles</label>
-            <div class="col-sm-5">
+        <div class="form-group ">
+            <label class="control-label col-sm-2" for="testfiles">TestFiles</label>
+            <div class=" col-sm-5">
                 {% for testfile in getfiles(userid, projectid) %}
                 <span>{{ testfile }}</span>
                 <a href="#" style="text-decoration:none;" onclick="delete_testfile('{{ testfile }}')">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true">
                 </a>
                 {% endfor %}
-                <input type="file" multiple="" class="form-control" name="testfiles">
+                {{ form.testfiles(multiple="", class="form-control") }}
             </div>
         </div>
-        <!--ReplceConfigFile-->
-        <div class="form-group row">
-            <label for="config" class="col-sm-2 col-form-label">Replace Config</label>
-            <div class="col-sm-5">
-                <span>config.ini</span>
-                <input type="file" class="form-control" name="configfile" onchange="set_textarea(this.value)">
-            </div>
-        </div>
-        <!--EditConfigFile-->
-        <div class="form-group row">
-            <label for="config" class="col-sm-2 col-form-label">Edit Config</label>
-            <div class="col-sm-5">
-                <div id="configcontentdiv" class="form-check">
-                    <textarea class="form-control" rows="13" id="configcontent" name="configcontent">{{ configcontent }}</textarea>
-                </div>
-            </div>
-        </div>
-        <!--Mode-->
-        <div class="form-group row">
-            <label for="runmode_group" class="col-sm-2 col-form-label">Run Mode</label>
-            <div class="col-sm-5">
-                <div class="radio" name='runmode_group'>
-                    <label>
-                        <input type="radio" name="mode" id="mode" value="0" {% if mode==0 %}checked{% endif %}> Local
-                    </label>
-                    <span>&nbsp;</span>
-                    <label>
-                        <input type="radio" name="mode" id="mode" value="1" {% if mode==1 %}checked{% endif %}> Remote: Sender
-                    </label>
-                </div>
-            </div>
-        </div>
-        <!--Submit-->
-        <div class="form-group row">
-            <div class="col-sm-4">
-                <button type="button" class="btn btn-success" onclick="window.location='/'">Cancel</button>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-        </div>
-</div>
 
-</form>
+        <!--ReplceConfigFile-->
+        <div class="form-group ">
+            <label class="control-label col-sm-2" for="configfile">Config File</label>
+            <div class=" col-sm-5">
+                <span>config.ini</span>
+                {{ form.configfile(onchange="set_textarea(this.value)", class="form-control") }}
+            </div>
+        </div>
+
+        <!--EditConfigFile-->
+        {{ wtf.form_field(form.configcontent, rows="13", form_type="horizontal", horizontal_columns=('sm', 2, 5)) }}
+        
+        <!--Run Mode-->
+        <div class="form-group ">
+            <label class="control-label col-sm-2" for="mode">Run Mode</label>
+            <div class=" col-sm-5">
+                {{ wtf.form_field(form.mode) }}
+            </div>
+        </div>
+        
+        <!--Submit-->
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-5">
+                    {{ wtf.form_field(form.submit, button_map={'submit': 'primary'}) }}
+                    {{ wtf.form_field(form.cancel, type="button", onclick="window.location='/'") }}
+            </div>
+        </div>
+    </form>
 </div>
-{% endblock %} {% block scripts %} {{ super() }}
+{% endblock %}
+{% block scripts %}
+{{ super() }}
 <script>
     function delete_testsuite(filename) {
-        $.post("/delete_testsuite", { "projectid": "{{ projectid }}", "filename": filename }, function (result) {
-            var resultObj = JSON.parse(result);
-            resultObj.projectid = "{{ projectid }}";
-            window.location = '{{ url_for("edit") }}?' + $.param(resultObj);
-        });
+        $.post("/delete_testsuite", { "projectid": "{{ projectid }}", "filename": filename },
+            window.location = '{{ url_for("edit", projectid=projectid) }}');
     }
     function delete_testfile(filename) {
-        $.post("/delete_testfile", { "projectid": "{{ projectid }}", "filename": filename }, function (result) {
-            var resultObj = JSON.parse(result);
-            resultObj.projectid = "{{ projectid }}";
-            window.location = '{{ url_for("edit") }}?' + $.param(resultObj);
-        });
+        $.post("/delete_testfile", { "projectid": "{{ projectid }}", "filename": filename },
+            window.location = '{{ url_for("edit", projectid=projectid) }}');
     }
     function set_textarea(value) {
         var elem = document.getElementById('configcontent');
@@ -102,4 +87,5 @@
             elem.readOnly = true
         }
     }
-</script> {% endblock %}
+</script> 
+{% endblock %}

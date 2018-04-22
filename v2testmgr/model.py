@@ -7,7 +7,7 @@ import sqlite3
 import sys
 import subprocess
 from flask import Flask, request, render_template, g, session, redirect, \
-    url_for, make_response, escape, send_from_directory
+    url_for, make_response, escape, send_from_directory, flash
 from werkzeug.utils import secure_filename
 from flask_bootstrap import Bootstrap
 
@@ -103,8 +103,8 @@ def create_user(username, password):
 
 
 # 保存文件
-def save_files(directory, files):
-    for file in files:
+def save_files(directory, *files):
+    for file in filter(None, files):
         filename = secure_filename(file.filename)
         # src = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         dst = os.path.join(directory, filename)
@@ -167,32 +167,40 @@ def get_projectname(userid, projectid):
 
 
 # 检查项目信息
-def check_project_info(userid, project, configfiles, testsuites, testfiles, projectid=None):
-    error = None
-    if not project:
-        error = "Project name is requried."
-    # 检查项目是否存在
+def check_project_info(userid, form, projectid=None):
+    form_valid = True
+    # 项目名校验
+    if not form.validate_on_submit():
+        for field in form.errors:
+            for error in form.errors[field]:
+                flash(error, category='error')
+                form_valid = False
     else:
-        existid = get_projectid(userid, project)
+        existid = get_projectid(userid, form.projectname.data)
         if existid and existid != projectid:
-            error = "Project exists."
-    # 检查文件
-    if configfiles:
-        if configfiles[0].filename.endswith('.ini'):
-            configfiles[0].filename = CONFIG_NAME
+            flash("Project exists.", category='error')
+            form_valid = False
+    # 配置文件扩展名
+    configfile = form.configfile.data
+    if configfile:
+        if configfile.filename.lower().endswith('.ini'):
+            configfile.filename = CONFIG_NAME
         else:
-            error = "Invalid Config file, only ini accepted"
-    if testsuites:
-        for testsuite in testsuites:
-            if not testsuite.filename.endswith('.xlsx'):
-                error = 'Invalid TestSuites, only xlsx accepted'
-                break
-    if testfiles:
-        for testfile in testfiles:
-            if testfile.filename == '':
-                error = 'Invalid TestFiles'
-                break
-    return error
+            flash("Invalid Config file, only ini accepted", category='error')
+            form_valid = False
+    # 测试套扩展名
+    for testsuite in filter(None, form.testsuites.raw_data):
+        if not testsuite.filename.lower().endswith('.xlsx'):
+            flash("Invalid TestSuites only xlsx accepted", category='error')
+            form_valid = False
+            break
+    # 测试文件扩展名
+    for testfile in filter(None, form.testfiles.raw_data):
+        if testfile.filename == '':
+            flash("Invalid TestFiles", category='error')
+            form_valid = False
+            break
+    return form_valid
 
 
 # 创建项目

@@ -1,35 +1,30 @@
-{% extends "layout.html" %} {% block title %} Sign up {% endblock %} {% block styles %} {{ super() }}
-<style>
-    .main {
-        text-align: center;
-        background-color: #fff;
-        border-radius: 20px;
-        width: 300px;
-        height: 350px;
-        margin: auto;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-    }
-</style>
-{% endblock %} {% block navbar %} {% endblock %} {% block content %}
-<form class="main" action="" method="post">
-    <h2 class="main-heading">Sign up</h2>
-    <br/> {% if error %}
-    <div class="alert alert-danger" role="alert">{{ error }}</div>
-    {% endif %}
-    <div class="form-group">
-        <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+{% extends "layout.html" %}{% import "bootstrap/wtf.html" as wtf %}
+{% block title %} Register {% endblock %} {% block styles
+    %} {{ super() }}
+    <style>
+        .main {
+            width: 300px;
+            margin: auto;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+    </style>
+    {% endblock %} {% block page_content %}
+    <div class="container">
+        <div class="main">
+            <h2>Register</h2>
+            <form method="post" , class="form" , role="form">
+                {{ form.csrf_token }}
+                {{ wtf.form_field(form.username) }}
+                {{ wtf.form_field(form.password) }}
+                {{ wtf.form_field(form.confirm) }}
+                {{ wtf.form_field(form.submit, button_map={'submit': 'primary'}) }}
+                {{ wtf.form_field(form.login, type="button", onclick="window.location='/login'")}}
+            </form>
+        </div>
     </div>
-    <div class="form-group">
-        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-    </div>
-    <div class="form-group">
-        <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm Password">
-    </div>
-    <button type="button" class="btn btn-success" id="cancel" onclick="window.location='/'">Cancel</button>
-    <button type="submit" class="btn btn-primary" id="submit">Submit</button>
-</form>
-{% endblock %}
+    {% endblock %} {% block log_action %}
+    <a href="login">Login</a>
+    {% endblock %}

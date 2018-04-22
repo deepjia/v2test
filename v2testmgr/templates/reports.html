@@ -61,10 +61,7 @@
 {% endblock %} {% block scripts %} {{ super() }}
 <script>
     function delete_testreport(filename) {
-        $.post("/delete_testreport", { 'projectid': '{{ projectid }}', 'filename': filename }, function (result) {
-            var resultObj = JSON.parse(result);
-            resultObj.projectid = "{{ projectid }}";
-            window.location = '{{ url_for("reports") }}?' + $.param(resultObj);
-        });
+        $.post("/delete_testreport", { 'projectid': '{{ projectid }}', 'filename': filename }, 
+        window.location = '{{ url_for("reports",projectid=projectid) }}');
     }
 </script> {% endblock %}

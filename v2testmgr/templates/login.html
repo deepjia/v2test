@@ -1,38 +1,28 @@
-{% extends "layout.html" %} {% block title %} Log in {% endblock %} {% block styles %} {{ super() }}
+{% import "bootstrap/wtf.html" as wtf %} {% extends "layout.html" %} {% block title %} Login {% endblock %} {% block styles
+%} {{ super() }}
 <style>
     .main {
-        text-align: center;
-        background-color: #fff;
-        border-radius: 20px;
         width: 300px;
-        height: 350px;
         margin: auto;
-        position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
     }
 </style>
-{% endblock %} {% block navbar %} {% endblock %} {% block content %}
-<form class="main" action="" method="post">
-    <h2 class="main-heading">V2Test Management</h2>
-    <br/>{% if error %}
-    <div class="alert alert-danger" role="alert">{{ error }}</div>
-    {% endif %}
-    <div class="form-group">
-        <input type="text" class="form-control" id="username" name="username" placeholder="Username" value="{{ username or '' }}">
+{% endblock %} {% block page_content %}
+<div class="container">
+    <div class="main">
+        <h2>Login</h2>
+        <form method="post" , class="form" , role="form">
+            {{ form.csrf_token }}
+            {{ wtf.form_field(form.username) }}
+            {{ wtf.form_field(form.password) }}
+            {{ wtf.form_field(form.submit, button_map={'submit': 'primary'}) }}
+            {{ wtf.form_field(form.reg, type="button", onclick="window.location='/reg'")}}
+        </form>
     </div>
-    <div class="form-group">
-        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-    </div>
-    <!--
-    <div class="form-check">
-      <input type="checkbox" class="form-check-input" id="check">
-      <label class="form-check-label" for="check">Check me out</label>
-    </div>
-    -->
-    <button type="button" class="btn btn-success" onclick="window.location='/reg'">Register</button>
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
+</div>
+{% endblock %} {% block log_action %}
+<a href="reg">Register</a>
 {% endblock %}
