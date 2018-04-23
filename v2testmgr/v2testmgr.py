@@ -285,8 +285,8 @@ def testsuite():
     suitedir = testsuite_dir(userid, projectid)
     testsuite = request.args.get('testsuite')
     suitepath = os.path.join(suitedir, testsuite)
-    boot = pe.get_book(file_name=suitepath)
-    testsuitecontent = boot.html.replace("<table>", "<table class='table table-striped table-bordered table-hover table-condensed'>")
+    book = pe.get_book(file_name=suitepath)
+    testsuitecontent = book.html.replace("<table>", "<table class='table table-striped table-bordered table-hover table-condensed'>")
     return render_template('testsuite.html', testsuite=testsuite, testsuitecontent=testsuitecontent, projectid=projectid)
 
 
