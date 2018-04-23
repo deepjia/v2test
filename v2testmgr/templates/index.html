@@ -91,11 +91,11 @@
 {% endblock %} {% block scripts %} {{ super() }}
 <script>
     function delete_project(projectid) {
-        $.post("/delete_project", { 'projectid': projectid }, 
-        window.location = '{{ url_for("index") }}');
+        $.post("/delete_project", { 'projectid': projectid }, function (result) {
+        window.location = '{{ url_for("index") }}';});
     }
     function run(projectid) {
-        $.post("/run", { 'projectid': projectid },
-        window.location = '{{ url_for("index") }}');
+        $.post("/run", { 'projectid': projectid },function (result) {
+        window.location = '{{ url_for("index") }}';});
     }
 </script> {% endblock %}
