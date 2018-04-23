@@ -27,9 +27,9 @@ class LoginForm(FlaskForm):
 
 class RegForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired(
-        message='Username required'), Length(min=4, max=25, message='Username should be 4-25 chars')])
+        message='Username required'), Length(min=3, max=25, message='Username should be 3-25 chars')])
     password = PasswordField('Password', validators=[InputRequired(
-        message='Password required'), Length(min=8, max=30, message='Password should be 8-30 chars')])
+        message='Password required'), Length(min=3, max=30, message='Password should be 3-30 chars')])
     confirm = PasswordField('Confirm Password', validators=[InputRequired(
         message='Please confirm password'), EqualTo('password', message='Passwords mismatch')])
     submit = SubmitField('Register')
@@ -54,6 +54,7 @@ class ProjectForm(FlaskForm):
 def index():
     if 'username' in session:
         userid = session['userid']
+        print(type(userid))
         username = session['username']
         resp = make_response(render_template(
             'index.html', userid=userid, username=username, projects=get_projects(userid)))

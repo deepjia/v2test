@@ -89,7 +89,7 @@ def get_userid(username):
         'SELECT uid FROM tb_user WHERE username="{0}"'.format(username))
     res = cur.fetchone()
     if res:
-        return res[0]
+        return str(res[0])
 
 
 def create_user(username, password):
