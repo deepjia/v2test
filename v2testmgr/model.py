@@ -31,13 +31,13 @@ app.config.update(dict(
     PASSWORD='default'
 ))
 
-app.config.from_envvar('FLASKR_SETTINGS', silent=True)
+app.config.from_envvar('V2TEST_SETTINGS', silent=True)
 app.config['TEMPLATE_CONFIG'] = os.path.join(
     app.root_path, 'templates', 'config.ini')
 app.config['DOWNOAD'] = os.path.join(app.root_path, 'download')
 app.config['TESTFILE_EXTENSIONS'] = set(
     ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'log', 'sql', 'xlsx', 'csv', 'html', 'htm', 'py'])
-
+app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 
 def testsuite_dir(userid, projectid):
     return os.path.join(app.root_path, 'user', userid, projectid, 'TestSuites')
