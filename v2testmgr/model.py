@@ -35,6 +35,8 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.config['TEMPLATE_CONFIG'] = os.path.join(
     app.root_path, 'templates', 'config.ini')
 app.config['DOWNOAD'] = os.path.join(app.root_path, 'download')
+app.config['TESTFILE_EXTENSIONS'] = set(
+    ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'log', 'sql', 'py'])
 
 
 def testsuite_dir(userid, projectid):
@@ -48,7 +50,7 @@ def testfile_dir(userid, projectid):
 def testreport_dir(userid, projectid):
     return os.path.join(app.root_path, 'user', userid, projectid, 'TestReports')
 
-    
+
 def runsuite_dir(userid, projectid):
     return os.path.join(app.root_path, 'user', userid, projectid, 'RunSuites')
 
@@ -196,7 +198,7 @@ def check_project_info(userid, form, projectid=None):
             break
     # 测试文件扩展名
     for testfile in filter(None, form.testfiles.raw_data):
-        if testfile.filename == '':
+        if testfile.filename == '' or (testsuite.filename.lower().rsplit('.', maxsplit=1)[-1] not in app.config['TESTFILE_EXTENSIONS']):
             flash("Invalid TestFiles", category='error')
             form_valid = False
             break
@@ -221,7 +223,8 @@ def create_project(project, userid, mode):
 # 项目改名
 def rename_project(userid, projectid, projectname):
     db = get_db()
-    db.execute('UPDATE tb_project SET project=? WHERE uid=? AND pid=?', [projectname, userid, projectid])
+    db.execute('UPDATE tb_project SET project=? WHERE uid=? AND pid=?', [
+               projectname, userid, projectid])
     db.commit()
 
 
@@ -254,38 +257,43 @@ def get_projectmode(userid, projectid):
         'SELECT mode FROM tb_project WHERE uid=? AND pid=?', [userid, projectid])
     res = cur.fetchone()
     if res:
-        # integer 
+        # integer
         return res[0]
+
 
 def set_projectstatus(userid, projectid, status):
     db = get_db()
-    db.execute('UPDATE tb_project SET status=? WHERE uid=? AND pid=?', [status, userid, projectid])
+    db.execute('UPDATE tb_project SET status=? WHERE uid=? AND pid=?', [
+               status, userid, projectid])
     db.commit()
-    
+
 
 def set_projectmode(userid, projectid, mode):
     db = get_db()
-    db.execute('UPDATE tb_project SET mode=? WHERE uid=? AND pid=?', [mode, userid, projectid])
+    db.execute('UPDATE tb_project SET mode=? WHERE uid=? AND pid=?',
+               [mode, userid, projectid])
     db.commit()
 
 
 def runlocal(userid, projectid):
-    r = subprocess.run([sys.executable, os.path.join(app.root_path,'..','run.py'), userid, projectid], stdout=subprocess.PIPE)
+    r = subprocess.run([sys.executable, os.path.join(
+        app.root_path, '..', 'run.py'), userid, projectid], stdout=subprocess.PIPE)
     if r.returncode:
         # error
         set_projectstatus(userid, projectid, 'Failing')
     else:
-        set_projectstatus(userid, projectid,'Passing')
+        set_projectstatus(userid, projectid, 'Passing')
 
 
 def runremote(userid, projectid):
-    r = subprocess.run([sys.executable, os.path.join(app.root_path,'..','sender.py'), userid, projectid], stdout=subprocess.PIPE)
+    r = subprocess.run([sys.executable, os.path.join(
+        app.root_path, '..', 'sender.py'), userid, projectid], stdout=subprocess.PIPE)
     if r.returncode:
         # error
         set_projectstatus(userid, projectid, 'Failing')
     else:
-        set_projectstatus(userid, projectid,'Need confirmation')
-        
+        set_projectstatus(userid, projectid, 'Need confirmation')
+
 
 # 获取用例文件名
 @app.template_global()
@@ -301,7 +309,7 @@ def getfiles(userid, projectid):
     path = testfile_dir(userid, projectid)
     return (x.name for x in os.scandir(path) if x.is_file())
 
-    
+
 app.secret_key = os.urandom(24)
 
 if __name__ == '__main__':

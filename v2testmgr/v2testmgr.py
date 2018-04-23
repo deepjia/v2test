@@ -33,7 +33,7 @@ class RegForm(FlaskForm):
     confirm = PasswordField('Confirm Password', validators=[InputRequired(
         message='Please confirm password'), EqualTo('password', message='Passwords mismatch')])
     submit = SubmitField('Register')
-    login = SubmitField('Login')
+    cancel = SubmitField('Cancel')
 
 
 class ProjectForm(FlaskForm):
