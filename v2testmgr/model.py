@@ -302,7 +302,7 @@ def getfiles(userid, projectid):
     return (x.name for x in os.scandir(path) if x.is_file())
 
     
-app.secret_key = 'ASDGWErs923#$%^^^^=='
+app.secret_key = os.urandom(24)
 
 if __name__ == '__main__':
     app.run()

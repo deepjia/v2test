@@ -54,7 +54,6 @@ class ProjectForm(FlaskForm):
 def index():
     if 'username' in session:
         userid = session['userid']
-        print(type(userid))
         username = session['username']
         resp = make_response(render_template(
             'index.html', userid=userid, username=username, projects=get_projects(userid)))
@@ -124,6 +123,8 @@ def logout():
 # 配置
 @app.route('/edit', methods=['GET', 'POST'])
 def edit():
+    if 'username' not in session:
+         return redirect(url_for("login"))
     form = ProjectForm()
     userid = session['userid']
     projectid = request.args.get('projectid')
@@ -166,6 +167,8 @@ def edit():
 # 添加项目
 @app.route('/add', methods=['GET', 'POST'])
 def add():
+    if 'username' not in session:
+         return redirect(url_for("login"))
     form = ProjectForm()
     userid = session['userid']
     if request.method == 'POST':
@@ -200,6 +203,8 @@ def add():
 
 @app.route('/dl_testsuite')
 def dl_testsuite():
+    if 'username' not in session:
+         return redirect(url_for("login"))
     userid = session['userid']
     projectid = request.args.get('projectid')
     filename = request.args.get('filename')
@@ -217,6 +222,8 @@ def dl_template():
 # 测试文件和脚本
 @app.route('/dl_testfile')
 def dl_testfile():
+    if 'username' not in session:
+         return redirect(url_for("login"))
     userid = session['userid']
     projectid = request.args.get('projectid')
     filename = request.args.get('filename')
@@ -228,6 +235,8 @@ def dl_testfile():
 # 下载测试报告
 @app.route('/dl_testreport')
 def dl_testreport():
+    if 'username' not in session:
+         return redirect(url_for("login"))
     userid = session['userid']
     projectid = request.args.get('projectid')
     filename = request.args.get('filename')
@@ -239,6 +248,8 @@ def dl_testreport():
 # 报告列表
 @app.route('/reports')
 def reports():
+    if 'username' not in session:
+         return redirect(url_for("login"))
     userid = session['userid']
     projectid = request.args.get('projectid')
     testreports = getreports(userid, projectid)
@@ -249,6 +260,8 @@ def reports():
 # 报告
 @app.route('/report')
 def report():
+    if 'username' not in session:
+         return redirect(url_for("login"))
     userid = session['userid']
     projectid = request.args.get('projectid')
     reportdir = testreport_dir(userid, projectid)
@@ -265,6 +278,8 @@ def report():
 # 删除项目
 @app.route('/delete_project', methods=['POST'])
 def delete_project():
+    if 'username' not in session:
+         return redirect(url_for("login"))
     projectid = request.form['projectid']
     userid = session['userid']
     if project_owner(projectid) == userid:
@@ -278,6 +293,8 @@ def delete_project():
 
 @app.route('/delete_testsuite', methods=['POST'])
 def delete_testsuite():
+    if 'username' not in session:
+         return redirect(url_for("login"))
     projectid = request.form['projectid']
     file_to_del = request.form['filename']
     userid = session['userid']
@@ -292,6 +309,8 @@ def delete_testsuite():
 
 @app.route('/delete_testfile', methods=['POST'])
 def delete_testfile():
+    if 'username' not in session:
+         return redirect(url_for("login"))
     projectid = request.form['projectid']
     file_to_del = request.form['filename']
     userid = session['userid']
@@ -306,6 +325,8 @@ def delete_testfile():
 
 @app.route('/delete_testreport', methods=['POST'])
 def delete_testreport():
+    if 'username' not in session:
+         return redirect(url_for("login"))
     projectid = request.form['projectid']
     file_to_del = request.form['filename']
     userid = session['userid']
@@ -320,6 +341,8 @@ def delete_testreport():
 
 @app.route('/run', methods=['POST'])
 def run():
+    if 'username' not in session:
+         return redirect(url_for("login"))
     userid = session['userid']
     projectid = request.form['projectid']
     mode = get_projectmode(userid, projectid)
