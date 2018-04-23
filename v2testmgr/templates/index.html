@@ -1,4 +1,5 @@
-{% extends "layout.html" %} {% block page_content %}
+{% extends "layout.html" %}
+{% block page_content %}
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-11">
@@ -33,8 +34,8 @@
             <tr>
                 <!--Project Name-->
                 <td>{{ projectname }}</td>
-                <th {% if projectstatus=='Passing' %} style="color: #5cb85c" {% endif %} {% if projectstatus=='Failing' %} style="color: #d9534f"
-                    {% endif %}>
+                <th {% if projectstatus=='Passing' %} style="color: #5cb85c" {% endif %}
+                    {% if projectstatus=='Failing' %} style="color: #d9534f"{% endif %}>
                     {{ projectstatus }}
                 </th>
                 <th>
@@ -43,9 +44,11 @@
                 <!--TestSuites-->
                 <th>
                     {% for testsuite in getsuites(userid, projectid) %}
-                    <div>{{ testsuite }}
+                    <div>
+                        <a href="{{ url_for('testsuite', projectid=projectid, testsuite=testsuite) }}">
+                            {{ testsuite }}
+                        </a>
                         <a href="{{ url_for('dl_testsuite', projectid=projectid, filename=testsuite) }}">
-
                             <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
                         </a>
                     </div>
@@ -88,7 +91,9 @@
         </tbody>
     </table>
 </div>
-{% endblock %} {% block scripts %} {{ super() }}
+{% endblock %}
+{% block scripts %}
+{{ super() }}
 <script>
     function delete_project(projectid) {
         $.post("/delete_project", { 'projectid': projectid }, function (result) {
@@ -98,4 +103,5 @@
         $.post("/run", { 'projectid': projectid },function (result) {
         window.location = '{{ url_for("index") }}';});
     }
-</script> {% endblock %}
+</script>
+{% endblock %}

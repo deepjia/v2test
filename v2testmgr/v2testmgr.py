@@ -14,6 +14,7 @@ from model import *
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextField, PasswordField, RadioField, FileField, TextAreaField, RadioField
 from wtforms.validators import InputRequired, EqualTo, Length
+import pyexcel as pe
 
 
 class LoginForm(FlaskForm):
@@ -273,6 +274,20 @@ def report():
     reportcontent = reportcontent.split('<body>', 1)[1].rsplit(
         '</body>', 1)[0].replace('V2Test Report', testreport)
     return render_template('report.html', report=testreport, reportcontent=reportcontent, projectid=projectid)
+
+
+@app.route('/testsuite')
+def testsuite():
+    if 'username' not in session:
+         return redirect(url_for("login"))
+    userid = session['userid']
+    projectid = request.args.get('projectid')
+    suitedir = testsuite_dir(userid, projectid)
+    testsuite = request.args.get('testsuite')
+    suitepath = os.path.join(suitedir, testsuite)
+    sheet = pe.get_sheet(file_name=suitepath)
+    testsuitecontent = sheet.html.replace("<table>", "<table class='table table-striped table-bordered table-hover table-condensed'>")
+    return render_template('testsuite.html', testsuite=testsuite, testsuitecontent=testsuitecontent, projectid=projectid)
 
 
 # 删除项目

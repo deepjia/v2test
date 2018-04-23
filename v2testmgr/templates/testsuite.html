@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block page_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <!--返回-->
+            <button type="button" class="btn btn-primary" onclick=window.location='{{ url_for("index") }}'>
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back
+            </button>
+            <!--下载-->
+            <button type="button" class="btn btn-primary" onclick=window.location="{{ url_for('dl_testsuite', projectid=projectid, filename=testsuite) }}">
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Download
+            </button>
+            <!--刷新-->
+            <button type="button" class="btn btn-primary" onclick="window.location.reload()">
+                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh
+            </button>
+        </div>
+    </div>
+    {{ testsuitecontent| safe }}
+</div>
+{% endblock %}
