@@ -4,7 +4,7 @@
 
 ## Demo
 
-<https://izlt.xyz>
+<http://izlt.xyz>
 
 demo/demo
 
