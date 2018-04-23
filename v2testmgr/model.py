@@ -36,7 +36,7 @@ app.config['TEMPLATE_CONFIG'] = os.path.join(
     app.root_path, 'templates', 'config.ini')
 app.config['DOWNOAD'] = os.path.join(app.root_path, 'download')
 app.config['TESTFILE_EXTENSIONS'] = set(
-    ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'log', 'sql', 'py'])
+    ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'log', 'sql', 'xlsx', 'csv', 'html', 'htm', 'py'])
 
 
 def testsuite_dir(userid, projectid):
@@ -198,7 +198,7 @@ def check_project_info(userid, form, projectid=None):
             break
     # 测试文件扩展名
     for testfile in filter(None, form.testfiles.raw_data):
-        if testfile.filename == '' or (testsuite.filename.lower().rsplit('.', maxsplit=1)[-1] not in app.config['TESTFILE_EXTENSIONS']):
+        if testfile.filename == '' or (testfile.filename.lower().rsplit('.', maxsplit=1)[-1] not in app.config['TESTFILE_EXTENSIONS']):
             flash("Invalid TestFiles", category='error')
             form_valid = False
             break
