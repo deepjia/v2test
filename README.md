@@ -6,6 +6,8 @@
 
 <https://izlt.xyz>
 
+demo/demo
+
 ## Introduction
 
 V2Test is a lightweight data driven testing framework based on Python 3.
