@@ -73,11 +73,11 @@
 <script>
     function delete_testsuite(filename) {
         $.post("/delete_testsuite", { "projectid": "{{ projectid }}", "filename": filename },function (result) {
-            window.location = '{{ url_for("edit", projectid=projectid) }}';});
+            window.location = '{{ url_for(".edit", projectid=projectid) }}';});
     }
     function delete_testfile(filename) {
         $.post("/delete_testfile", { "projectid": "{{ projectid }}", "filename": filename },function (result) {
-            window.location = '{{ url_for("edit", projectid=projectid) }}';});
+            window.location = '{{ url_for(".edit", projectid=projectid) }}';});
     }
     function set_textarea(value) {
         var elem = document.getElementById('configcontent');

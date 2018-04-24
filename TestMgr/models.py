@@ -1,43 +1,31 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
-import json
 import shutil
 import sqlite3
 import sys
 import subprocess
-from flask import Flask, request, render_template, g, session, redirect, \
-    url_for, make_response, escape, send_from_directory, flash
+from flask import g
 from werkzeug.utils import secure_filename
-from flask_bootstrap import Bootstrap
+from manager import app
 
 
-TESTSUITE_DIR = 'TestSuites'
-TESTFILE_DIR = 'TestFiles'
-TESTREPORT_DIR = 'TestReports'
-TEMPLATE_DIR = 'templates'
-CONFIG_NAME = 'config.ini'
-TEMPLATE_NAME = 'template.zip'
+def connect_db():
+    rv = sqlite3.connect(app.config['DATABASE'])
+    rv.row_factory = sqlite3.Row
+    return rv
 
 
-app = Flask(__name__)
-Bootstrap(app)
-app.config.from_object(__name__)
+def get_db():
+    if not hasattr(g, 'sqlite_db'):
+        g.sqlite_db = connect_db()
+    return g.sqlite_db
 
-app.config.update(dict(
-    DATABASE=os.path.join(app.root_path, 'v2testmgr.db'),
-    SECRET_KEY='development_temp_key',
-    USERNAME='admin',
-    PASSWORD='default'
-))
 
-app.config.from_envvar('V2TEST_SETTINGS', silent=True)
-app.config['TEMPLATE_CONFIG'] = os.path.join(
-    app.root_path, 'templates', 'config.ini')
-app.config['DOWNOAD'] = os.path.join(app.root_path, 'download')
-app.config['TESTFILE_EXTENSIONS'] = set(
-    ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'log', 'sql', 'xlsx', 'csv', 'html', 'htm', 'py'])
-app.config['BOOTSTRAP_SERVE_LOCAL'] = True
+@app.teardown_appcontext
+def close_db(error):
+    if hasattr(g, 'sqlite_db'):
+        g.sqlite_db.close()
 
 def testsuite_dir(userid, projectid):
     return os.path.join(app.root_path, 'user', userid, projectid, 'TestSuites')
@@ -65,24 +53,6 @@ def runreport_dir(userid, projectid):
 
 def project_dir(userid, projectid):
     return os.path.join(app.root_path, 'user', userid, projectid)
-
-
-def connect_db():
-    rv = sqlite3.connect(app.config['DATABASE'])
-    rv.row_factory = sqlite3.Row
-    return rv
-
-
-def get_db():
-    if not hasattr(g, 'sqlite_db'):
-        g.sqlite_db = connect_db()
-    return g.sqlite_db
-
-
-@app.teardown_appcontext
-def close_db(error):
-    if hasattr(g, 'sqlite_db'):
-        g.sqlite_db.close()
 
 
 def get_userid(username):
@@ -120,13 +90,6 @@ def get_projects(userid):
     cur = db.execute(
         'SELECT pid, project, status, mode FROM tb_project WHERE uid=?', [userid])
     return cur.fetchall()
-
-
-# 登入用户
-def log_user_in(userid, username):
-    session['userid'] = userid
-    session['username'] = username
-    return redirect(url_for("index"))
 
 
 # 登录校验
@@ -170,39 +133,34 @@ def get_projectname(userid, projectid):
 
 # 检查项目信息
 def check_project_info(userid, form, projectid=None):
-    form_valid = True
+    errors = []
     # 项目名校验
     if not form.validate_on_submit():
         for field in form.errors:
             for error in form.errors[field]:
-                flash(error, category='error')
-                form_valid = False
+                errors.append(error)
     else:
         existid = get_projectid(userid, form.projectname.data)
         if existid and existid != projectid:
-            flash("Project exists.", category='error')
-            form_valid = False
+            errors.append("Project exists.")
     # 配置文件扩展名
     configfile = form.configfile.data
     if configfile:
         if configfile.filename.lower().endswith('.ini'):
-            configfile.filename = CONFIG_NAME
+            configfile.filename = app.config['CONFIG_NAME']
         else:
-            flash("Invalid Config file, only ini accepted", category='error')
-            form_valid = False
+            errors.append("Invalid Config file, only ini accepted")
     # 测试套扩展名
     for testsuite in filter(None, form.testsuites.raw_data):
         if not testsuite.filename.lower().endswith('.xlsx'):
-            flash("Invalid TestSuites only xlsx accepted", category='error')
-            form_valid = False
+            errors.append("Invalid TestSuites only xlsx accepted")
             break
     # 测试文件扩展名
     for testfile in filter(None, form.testfiles.raw_data):
         if testfile.filename == '' or (testfile.filename.lower().rsplit('.', maxsplit=1)[-1] not in app.config['TESTFILE_EXTENSIONS']):
-            flash("Invalid TestFiles", category='error')
-            form_valid = False
+            errors.append("Invalid TestFiles")
             break
-    return form_valid
+    return errors
 
 
 # 创建项目
@@ -295,22 +253,6 @@ def runremote(userid, projectid):
         set_projectstatus(userid, projectid, 'Need confirmation')
 
 
-# 获取用例文件名
-@app.template_global()
-def getsuites(userid, projectid):
-    path = testsuite_dir(userid, projectid)
-    return (x.name for x in os.scandir(path) if x.is_file()
-            and x.name.endswith(".xlsx") and '~$' not in x.name)
 
 
-# 获取测试文件名
-@app.template_global()
-def getfiles(userid, projectid):
-    path = testfile_dir(userid, projectid)
-    return (x.name for x in os.scandir(path) if x.is_file())
 
-
-app.secret_key = os.urandom(24)
-
-if __name__ == '__main__':
-    app.run()

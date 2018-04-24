@@ -17,7 +17,7 @@ class GetConfig:
 DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 if len(sys.argv)==3:
     # for V2Test Management
-    TEST_DIR = os.path.join(DIR, 'v2testmgr', 'user', sys.argv[1], sys.argv[2])
+    TEST_DIR = os.path.join(DIR, 'TestMgr', 'user', sys.argv[1], sys.argv[2])
     REMOTE_CASE_DIR = CASE_DIR = os.path.join(TEST_DIR, 'RunSuites')
     REMOTE_FILE_DIR = FILE_DIR = os.path.join(TEST_DIR, 'RunFiles')
     REMOTE_REPORT_DIR = REPORT_DIR = os.path.join(TEST_DIR, 'TestReports')
