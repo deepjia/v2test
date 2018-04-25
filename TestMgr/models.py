@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 import os
 import shutil
-import sqlite3
 import sys
 import subprocess
-from flask import g, current_app
-from . import sqlitedb
+from flask import current_app
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash,check_password_hash
+from . import sqlitedb
+
+
 
 
 def testsuite_dir(userid, projectid):
@@ -50,9 +52,10 @@ def get_userid(username):
 def create_user(username, password):
     db = sqlitedb.connection
     # 建用户
+    password_hash = generate_password_hash(password)
     cur = db.cursor()
     cur.execute('INSERT INTO tb_user (username, password) VALUES(?, ?)', [
-                username, password])
+                username, password_hash])
     db.commit()
     return cur.lastrowid
 
@@ -78,10 +81,10 @@ def get_projects(userid):
 # 登录校验
 def valid_login(username, password):
     db = sqlitedb.connection
-    cur = db.execute('SELECT uid FROM tb_user WHERE username=? and password=?', [
-                     username, password])
+    cur = db.execute('SELECT uid,password FROM tb_user WHERE username=?', [
+                     username])
     res = cur.fetchone()
-    if res:
+    if res and check_password_hash(res[1],password):
         return str(res[0])
 
 
