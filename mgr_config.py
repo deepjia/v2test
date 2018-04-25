@@ -26,18 +26,18 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    DATABASE = os.path.join(basedir, 'mgr_dev.db')
+    SQLITE3_DATABASE = os.path.join(basedir, 'mgr_dev.db')
     #SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'mgr_dev.db')
 
 
 class ProductionConfig(Config):
-    DATABASE = os.path.join(basedir, 'mgr.db')
+    SQLITE3_DATABASE = os.path.join(basedir, 'mgr.db')
     #SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'mgr.db')
 
 
 class TestingConfig(Config):
     TESTING = True
-    DATABASE = os.path.join(basedir, 'mgr_test.db')
+    SQLITE3_DATABASE = os.path.join(basedir, 'mgr_test.db')
     #SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'mgr_test.db')
 
 

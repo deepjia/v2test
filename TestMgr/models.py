@@ -5,58 +5,41 @@ import shutil
 import sqlite3
 import sys
 import subprocess
-from flask import g
+from flask import g, current_app
+from . import sqlitedb
 from werkzeug.utils import secure_filename
-from manager import app
 
-
-def connect_db():
-    rv = sqlite3.connect(app.config['DATABASE'])
-    rv.row_factory = sqlite3.Row
-    return rv
-
-
-def get_db():
-    if not hasattr(g, 'sqlite_db'):
-        g.sqlite_db = connect_db()
-    return g.sqlite_db
-
-
-@app.teardown_appcontext
-def close_db(error):
-    if hasattr(g, 'sqlite_db'):
-        g.sqlite_db.close()
 
 def testsuite_dir(userid, projectid):
-    return os.path.join(app.root_path, 'user', userid, projectid, 'TestSuites')
+    return os.path.join(current_app.root_path, 'user', userid, projectid, 'TestSuites')
 
 
 def testfile_dir(userid, projectid):
-    return os.path.join(app.root_path, 'user', userid, projectid, 'TestFiles')
+    return os.path.join(current_app.root_path, 'user', userid, projectid, 'TestFiles')
 
 
 def testreport_dir(userid, projectid):
-    return os.path.join(app.root_path, 'user', userid, projectid, 'TestReports')
+    return os.path.join(current_app.root_path, 'user', userid, projectid, 'TestReports')
 
 
 def runsuite_dir(userid, projectid):
-    return os.path.join(app.root_path, 'user', userid, projectid, 'RunSuites')
+    return os.path.join(current_app.root_path, 'user', userid, projectid, 'RunSuites')
 
 
 def runfile_dir(userid, projectid):
-    return os.path.join(app.root_path, 'user', userid, projectid, 'RunFiles')
+    return os.path.join(current_app.root_path, 'user', userid, projectid, 'RunFiles')
 
 
 def runreport_dir(userid, projectid):
-    return os.path.join(app.root_path, 'user', userid, projectid, 'RunReports')
+    return os.path.join(current_app.root_path, 'user', userid, projectid, 'RunReports')
 
 
 def project_dir(userid, projectid):
-    return os.path.join(app.root_path, 'user', userid, projectid)
+    return os.path.join(current_app.root_path, 'user', userid, projectid)
 
 
 def get_userid(username):
-    db = get_db()
+    db = sqlitedb.connection
     cur = db.execute(
         'SELECT uid FROM tb_user WHERE username="{0}"'.format(username))
     res = cur.fetchone()
@@ -65,7 +48,7 @@ def get_userid(username):
 
 
 def create_user(username, password):
-    db = get_db()
+    db = sqlitedb.connection
     # 建用户
     cur = db.cursor()
     cur.execute('INSERT INTO tb_user (username, password) VALUES(?, ?)', [
@@ -86,7 +69,7 @@ def save_files(directory, *files):
 
 # 用户的项目列表
 def get_projects(userid):
-    db = get_db()
+    db = sqlitedb.connection
     cur = db.execute(
         'SELECT pid, project, status, mode FROM tb_project WHERE uid=?', [userid])
     return cur.fetchall()
@@ -94,7 +77,7 @@ def get_projects(userid):
 
 # 登录校验
 def valid_login(username, password):
-    db = get_db()
+    db = sqlitedb.connection
     cur = db.execute('SELECT uid FROM tb_user WHERE username=? and password=?', [
                      username, password])
     res = cur.fetchone()
@@ -104,7 +87,7 @@ def valid_login(username, password):
 
 # 检查项目归属
 def project_owner(projectid):
-    db = get_db()
+    db = sqlitedb.connection
     cur = db.execute('SELECT uid FROM tb_project WHERE pid=?', [projectid])
     res = cur.fetchone()
     if res:
@@ -113,7 +96,7 @@ def project_owner(projectid):
 
 # 获取项目id
 def get_projectid(userid, project):
-    db = get_db()
+    db = sqlitedb.connection
     cur = db.execute(
         'SELECT pid FROM tb_project WHERE uid=? AND project=?', [userid, project])
     res = cur.fetchone()
@@ -123,7 +106,7 @@ def get_projectid(userid, project):
 
 # 获取项目名
 def get_projectname(userid, projectid):
-    db = get_db()
+    db = sqlitedb.connection
     cur = db.execute(
         'SELECT project FROM tb_project WHERE uid=? AND pid=?', [userid, projectid])
     res = cur.fetchone()
@@ -147,7 +130,7 @@ def check_project_info(userid, form, projectid=None):
     configfile = form.configfile.data
     if configfile:
         if configfile.filename.lower().endswith('.ini'):
-            configfile.filename = app.config['CONFIG_NAME']
+            configfile.filename = current_app.config['CONFIG_NAME']
         else:
             errors.append("Invalid Config file, only ini accepted")
     # 测试套扩展名
@@ -157,7 +140,7 @@ def check_project_info(userid, form, projectid=None):
             break
     # 测试文件扩展名
     for testfile in filter(None, form.testfiles.raw_data):
-        if testfile.filename == '' or (testfile.filename.lower().rsplit('.', maxsplit=1)[-1] not in app.config['TESTFILE_EXTENSIONS']):
+        if testfile.filename == '' or (testfile.filename.lower().rsplit('.', maxsplit=1)[-1] not in current_app.config['TESTFILE_EXTENSIONS']):
             errors.append("Invalid TestFiles")
             break
     return errors
@@ -165,7 +148,7 @@ def check_project_info(userid, form, projectid=None):
 
 # 创建项目
 def create_project(project, userid, mode):
-    db = get_db()
+    db = sqlitedb.connection
     # 建用户
     cur = db.cursor()
     cur.execute('INSERT INTO tb_project (project, uid, mode) VALUES(?, ?, ?)', [
@@ -180,14 +163,14 @@ def create_project(project, userid, mode):
 
 # 项目改名
 def rename_project(userid, projectid, projectname):
-    db = get_db()
+    db = sqlitedb.connection
     db.execute('UPDATE tb_project SET project=? WHERE uid=? AND pid=?', [
                projectname, userid, projectid])
     db.commit()
 
 
 def rm_project(projectid, userid):
-    db = get_db()
+    db = sqlitedb.connection
     # 建用户
     cur = db.cursor()
     cur.execute('delete from tb_project WHERE pid=? AND uid=?', [
@@ -210,7 +193,7 @@ def getreports(userid, projectid):
 
 
 def get_projectmode(userid, projectid):
-    db = get_db()
+    db = sqlitedb.connection
     cur = db.execute(
         'SELECT mode FROM tb_project WHERE uid=? AND pid=?', [userid, projectid])
     res = cur.fetchone()
@@ -220,14 +203,14 @@ def get_projectmode(userid, projectid):
 
 
 def set_projectstatus(userid, projectid, status):
-    db = get_db()
+    db = sqlitedb.connection
     db.execute('UPDATE tb_project SET status=? WHERE uid=? AND pid=?', [
                status, userid, projectid])
     db.commit()
 
 
 def set_projectmode(userid, projectid, mode):
-    db = get_db()
+    db = sqlitedb.connection
     db.execute('UPDATE tb_project SET mode=? WHERE uid=? AND pid=?',
                [mode, userid, projectid])
     db.commit()
@@ -235,7 +218,7 @@ def set_projectmode(userid, projectid, mode):
 
 def runlocal(userid, projectid):
     r = subprocess.run([sys.executable, os.path.join(
-        app.root_path, '..', 'run.py'), userid, projectid], stdout=subprocess.PIPE)
+        current_app.root_path, '..', 'run.py'), userid, projectid], stdout=subprocess.PIPE)
     if r.returncode:
         # error
         set_projectstatus(userid, projectid, 'Failing')
@@ -245,7 +228,7 @@ def runlocal(userid, projectid):
 
 def runremote(userid, projectid):
     r = subprocess.run([sys.executable, os.path.join(
-        app.root_path, '..', 'sender.py'), userid, projectid], stdout=subprocess.PIPE)
+        current_app.root_path, '..', 'sender.py'), userid, projectid], stdout=subprocess.PIPE)
     if r.returncode:
         # error
         set_projectstatus(userid, projectid, 'Failing')

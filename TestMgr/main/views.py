@@ -1,9 +1,10 @@
 """Views"""
 import os
+import re
 import shutil
 from multiprocessing import Process
 from flask import request, render_template, session, redirect, \
-    url_for, make_response, send_from_directory, flash, jsonify
+    url_for, make_response, send_from_directory, flash, jsonify, current_app
 import pyexcel as pe
 
 from . import main
@@ -17,6 +18,8 @@ def log_user_in(userid, username):
     return redirect(url_for(".index"))
 
 # 获取用例文件名
+
+
 @main.app_template_global()
 def getsuites(userid, projectid):
     path = testsuite_dir(userid, projectid)
@@ -107,12 +110,12 @@ def logout():
 @main.route('/edit', methods=['GET', 'POST'])
 def edit():
     if 'username' not in session:
-         return redirect(url_for(".login"))
+        return redirect(url_for(".login"))
     form = ProjectForm()
     userid = session['userid']
     projectid = request.args.get('projectid')
     config_path = os.path.join(
-        app.root_path, 'user', userid, projectid, 'config.ini')
+        current_app.root_path, 'user', userid, projectid, 'config.ini')
     if request.method == 'POST':
         # 项目校验 #
         errors = check_project_info(userid, form, projectid)
@@ -128,16 +131,19 @@ def edit():
             set_projectmode(userid, projectid, form.mode.data)
             # 替换配置文件
             if form.configfile.data:
-                save_files(project_dir(userid, projectid), form.configfile.data)
+                save_files(project_dir(userid, projectid),
+                           form.configfile.data)
             # 编辑配置文件
             else:
                 with open(config_path, 'w') as f:
                     f.write(form.configcontent.data.replace('\r', ''))
                     f.close()
             # 增加测试套
-            save_files(testsuite_dir(userid, projectid), *form.testsuites.raw_data)
+            save_files(testsuite_dir(userid, projectid),
+                       *form.testsuites.raw_data)
             # 增加测试文件
-            save_files(testfile_dir(userid, projectid), *form.testfiles.raw_data)
+            save_files(testfile_dir(userid, projectid),
+                       *form.testfiles.raw_data)
             flash('Project edited', category='info')
             return redirect(url_for(".index"))
     # GET 请求
@@ -154,7 +160,7 @@ def edit():
 @main.route('/add', methods=['GET', 'POST'])
 def add():
     if 'username' not in session:
-         return redirect(url_for(".login"))
+        return redirect(url_for(".login"))
     form = ProjectForm()
     userid = session['userid']
     if request.method == 'POST':
@@ -165,24 +171,28 @@ def add():
                 flash(error, category='error')
             return redirect(url_for(".add"))
         else:
-            projectid = create_project(form.projectname.data, userid, form.mode.data)
+            projectid = create_project(
+                form.projectname.data, userid, form.mode.data)
             config_path = os.path.join(
                 project_dir(userid, projectid), 'config.ini')
             # 保存配置文件
             if form.configfile.data:
-                save_files(project_dir(userid, projectid), form.configfile.data)
+                save_files(project_dir(userid, projectid),
+                           form.configfile.data)
             # 无配置文件时，加载默认模版，并按需修改
             else:
-                shutil.copy(app.config['TEMPLATE_CONFIG'], config_path)
+                shutil.copy(current_app.config['TEMPLATE_CONFIG'], config_path)
                 configcontent = form.configcontent.data
                 if configcontent:
                     with open(config_path, 'w') as f:
                         f.write(configcontent.replace('\r', ''))
                         f.close()
             # 保存测试套
-            save_files(testsuite_dir(userid, projectid), *form.testsuites.raw_data)
+            save_files(testsuite_dir(userid, projectid),
+                       *form.testsuites.raw_data)
             # 保存测试文件
-            save_files(testfile_dir(userid, projectid), *form.testfiles.raw_data)
+            save_files(testfile_dir(userid, projectid),
+                       *form.testfiles.raw_data)
             flash('Project added', category='info')
             return redirect(url_for(".index"))
     else:
@@ -193,31 +203,31 @@ def add():
 @main.route('/dl_testsuite')
 def dl_testsuite():
     if 'username' not in session:
-         return redirect(url_for(".login"))
+        return redirect(url_for(".login"))
     userid = session['userid']
     projectid = request.args.get('projectid')
     filename = request.args.get('filename')
     directory = os.path.join(
-        app.root_path, 'user', userid, projectid, app.config['TESTSUITE_DIR'])
+        current_app.root_path, 'user', userid, projectid, current_app.config['TESTSUITE_DIR'])
     return send_from_directory(directory, filename, as_attachment=True)
 
 
 @main.route('/dl_template')
 def dl_template():
-    directory = app.config['DOWNOAD']
-    return send_from_directory(directory, app.config['TEMPLATE_NAME'], as_attachment=True)
+    directory = current_app.config['DOWNOAD']
+    return send_from_directory(directory, current_app.config['TEMPLATE_NAME'], as_attachment=True)
 
 
 # 测试文件和脚本
 @main.route('/dl_testfile')
 def dl_testfile():
     if 'username' not in session:
-         return redirect(url_for(".login"))
+        return redirect(url_for(".login"))
     userid = session['userid']
     projectid = request.args.get('projectid')
     filename = request.args.get('filename')
     directory = os.path.join(
-        app.root_path, 'user', userid, projectid, app.config['TESTFILE_DIR'])
+        current_app.root_path, 'user', userid, projectid, current_app.config['TESTFILE_DIR'])
     return send_from_directory(directory, filename, as_attachment=True)
 
 
@@ -225,12 +235,12 @@ def dl_testfile():
 @main.route('/dl_testreport')
 def dl_testreport():
     if 'username' not in session:
-         return redirect(url_for(".login"))
+        return redirect(url_for(".login"))
     userid = session['userid']
     projectid = request.args.get('projectid')
     filename = request.args.get('filename')
     directory = os.path.join(
-        app.root_path, 'user', userid, projectid, app.config['TESTREPORT_DIR'])
+        current_app.root_path, 'user', userid, projectid, current_app.config['TESTREPORT_DIR'])
     return send_from_directory(directory, filename, as_attachment=True)
 
 
@@ -238,7 +248,7 @@ def dl_testreport():
 @main.route('/reports')
 def reports():
     if 'username' not in session:
-         return redirect(url_for(".login"))
+        return redirect(url_for(".login"))
     userid = session['userid']
     projectid = request.args.get('projectid')
     testreports = getreports(userid, projectid)
@@ -250,7 +260,7 @@ def reports():
 @main.route('/report')
 def report():
     if 'username' not in session:
-         return redirect(url_for(".login"))
+        return redirect(url_for(".login"))
     userid = session['userid']
     projectid = request.args.get('projectid')
     reportdir = testreport_dir(userid, projectid)
@@ -267,14 +277,16 @@ def report():
 @main.route('/testsuite')
 def testsuite():
     if 'username' not in session:
-         return redirect(url_for(".login"))
+        return redirect(url_for(".login"))
     userid = session['userid']
     projectid = request.args.get('projectid')
     suitedir = testsuite_dir(userid, projectid)
     testsuite = request.args.get('testsuite')
     suitepath = os.path.join(suitedir, testsuite)
     book = pe.get_book(file_name=suitepath)
-    testsuitecontent = book.html.replace("<table>", "<table class='table table-striped table-bordered table-hover table-condensed'>")
+    testsuitecontent = book.html.replace("<table>", "<table class='table table-bordered table-hover table-condensed'>")
+    testsuitecontent = re.sub(r'<tbody>\n<tr>', r'<tbody>\n<tr class="warning">', testsuitecontent)
+    testsuitecontent = re.sub(r'<tr><td>([^<>]*[^ <>]+[^<>]*)</td>',r'<tr class="success"><td>\1</td>', testsuitecontent)
     return render_template('testsuite.html', testsuite=testsuite, testsuitecontent=testsuitecontent, projectid=projectid)
 
 
@@ -282,7 +294,7 @@ def testsuite():
 @main.route('/delete_project', methods=['POST'])
 def delete_project():
     if 'username' not in session:
-         return redirect(url_for(".login"))
+        return redirect(url_for(".login"))
     projectid = request.form['projectid']
     userid = session['userid']
     if project_owner(projectid) == userid:
@@ -297,7 +309,7 @@ def delete_project():
 @main.route('/delete_testsuite', methods=['POST'])
 def delete_testsuite():
     if 'username' not in session:
-         return redirect(url_for(".login"))
+        return redirect(url_for(".login"))
     projectid = request.form['projectid']
     file_to_del = request.form['filename']
     userid = session['userid']
@@ -313,7 +325,7 @@ def delete_testsuite():
 @main.route('/delete_testfile', methods=['POST'])
 def delete_testfile():
     if 'username' not in session:
-         return redirect(url_for(".login"))
+        return redirect(url_for(".login"))
     projectid = request.form['projectid']
     file_to_del = request.form['filename']
     userid = session['userid']
@@ -329,7 +341,7 @@ def delete_testfile():
 @main.route('/delete_testreport', methods=['POST'])
 def delete_testreport():
     if 'username' not in session:
-         return redirect(url_for(".login"))
+        return redirect(url_for(".login"))
     projectid = request.form['projectid']
     file_to_del = request.form['filename']
     userid = session['userid']
@@ -345,7 +357,7 @@ def delete_testreport():
 @main.route('/run', methods=['POST'])
 def run():
     if 'username' not in session:
-         return redirect(url_for(".login"))
+        return redirect(url_for(".login"))
     userid = session['userid']
     projectid = request.form['projectid']
     mode = get_projectmode(userid, projectid)
@@ -368,17 +380,3 @@ def run():
     set_projectstatus(userid, projectid, 'Running')
     flash('Project start running', category='info')
     return jsonify({'status': 'success'})
-
-
-@main.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
-
-
-@main.errorhandler(500)
-def internal_server_error(e):
-    return render_template('500.html'), 500
-
-
-if __name__ == '__main__':
-    app.run()
