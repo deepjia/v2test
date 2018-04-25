@@ -43,6 +43,7 @@ It's easy to develop new engines.
 
 ![login](https://user-images.githubusercontent.com/1452602/38806756-e9f8fb80-41ac-11e8-8f35-267807301e22.png)
 ![add](https://user-images.githubusercontent.com/1452602/38806771-f801eb38-41ac-11e8-8246-1d8379c4a994.png)
+![testsuite](https://user-images.githubusercontent.com/1452602/39228744-3cec3b22-4892-11e8-877f-1aa8e421075c.png)
 ![run](https://user-images.githubusercontent.com/1452602/38806780-01bd271e-41ad-11e8-89d4-900be8f11757.png)
 ![reports](https://user-images.githubusercontent.com/1452602/38806777-fef1dd18-41ac-11e8-9e1c-448be8467652.png)
 ![case](https://user-images.githubusercontent.com/1452602/38806784-03e451b6-41ad-11e8-8a7f-994b9fd4511e.png)
