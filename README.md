@@ -56,11 +56,13 @@ Python 3.5+
 
 ## Installation
 
+Standalone:
+
 Install Git and Python 3.5+.
 
 Then, clone the repo and install requirements:
 
-```
+```bash
 git clone https://github.com/deepjia/v2test.git
 cd v2test
 python3 -m venv venv
@@ -68,12 +70,16 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Run
-
-### WebGUI
 Docker:
 ```bash
 docker pull deepjia/v2test
+```
+
+## Run
+
+### WebGUI
+Docker (Production):
+```bash
 docker run -e SECRET_KEY='yoursecretkey' \
     -e V2TEST_CONFIG='production' \
     -p 0.0.0.0:8080:8080 \
@@ -82,7 +88,7 @@ docker run -e SECRET_KEY='yoursecretkey' \
 The default url:
 <https://server_ip:8080/>
 
-Development:
+Standalone (Development):
 ```
 ./manager.sh
 ```
