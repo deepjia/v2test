@@ -12,7 +12,7 @@ demo/demo
 
 V2Test is a lightweight data driven testing framework based on Python 3.
 
-Now intergrated with WebGUI: V2Test Management.
+Now integrated with WebGUI: V2Test Management.
 
 Engines:
 
@@ -35,8 +35,7 @@ Todos:
 * [Doc] Documents for human beings.
 * [Engine] Scripts for appium installation.
 * [Engine] Add more actions to Locust load testing engine.
-* [Engine] May add some unit test engine, for example gtest.
-* [Deploy] Docker containerization.
+* [Engine] May add some unit test engine.
 * [Framework] Add loop/repeat action. 
 
 It's easy to develop new engines.
@@ -53,34 +52,18 @@ It's easy to develop new engines.
 
 ## Prerequisites
 
-Python 3.5+ with modules:
-
-ddt html-testRunner openpyxl PyMySQL requests selenium locustio
+Python 3.5+
 
 ## Installation
 
 Install Git and Python 3 with pip. Homebrew is recommended for macOS.
 
-Then, clone the repo:
+Then, clone the repo and install requirements:
 
 ```
 git clone https://github.com/deepjia/v2test.git
-```
-For macOS without venv, I recommend pip3 with `--user` so that `sudo` is unnecessary:
-
-```
-pip3 install -r requirements.txt --user -U
-PATH=$PATH:~/Library/Python/3.6/bin
-```
-
-For Linux/Windows with Python 3 installed or for venv:
-
-```
-pip3 install -r requirements.txt
-```
-or if Python 3 is the default:
-
-```
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -120,7 +103,7 @@ Set *ReceiverName=IP:PORT* in `config.ini`.
 ### WebGUI
 
 ```
-./v2testmgr.sh
+./manager.sh
 ```
 The default url:
 <https://127.0.0.1:5000/>
