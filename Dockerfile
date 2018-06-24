@@ -4,11 +4,11 @@ WORKDIR /usr/src/app
 
 COPY requirements.txt ./
 
-RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list \
+RUN pip install --no-cache-dir -r requirements.txt \
+    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list \
     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && apt-get update \
-    && apt-get install -y google-chrome-stable \
-    && pip install --no-cache-dir -r requirements.txt
+    && apt-get install -y google-chrome-stable
 
 COPY . .
 

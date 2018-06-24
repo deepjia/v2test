@@ -62,6 +62,7 @@ Then, clone the repo and install requirements:
 
 ```
 git clone https://github.com/deepjia/v2test.git
+cd v2test
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
