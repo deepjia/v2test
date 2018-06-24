@@ -48,6 +48,8 @@ def driver_func():
         if driver == 'Chrome':
             options = webdriver.ChromeOptions()
             options.set_headless(headless)
+            options.add_argument('--no-sandbox')
+            options.add_argument('--disable-dev-shm-usage')
             return webdriver.Chrome(executable_path=driver_path, chrome_options=options)
 
 
