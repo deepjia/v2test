@@ -70,6 +70,25 @@ pip install -r requirements.txt
 
 ## Run
 
+### WebGUI
+Docker:
+```bash
+docker pull deepjia/v2test
+docker run -e SECRET_KEY='yoursecretkey' \
+    -e V2TEST_CONFIG='production' \
+    -p 0.0.0.0:8080:8080 \
+    --name docker-v2test -d deepjia/v2test
+```
+The default url:
+<https://server_ip:8080/>
+
+Development:
+```
+./manager.sh
+```
+The default url:
+<https://127.0.0.1:5000/>
+
 ### Local
 
 ```
@@ -101,13 +120,7 @@ Send cases in `RemoteReport/ReceiverName` to receivers and reports will be gathe
 
 Set *ReceiverName=IP:PORT* in `config.ini`.
 
-### WebGUI
 
-```
-./manager.sh
-```
-The default url:
-<https://127.0.0.1:5000/>
 
 ## Structure
 
