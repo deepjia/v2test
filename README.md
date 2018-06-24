@@ -56,7 +56,7 @@ Python 3.5+
 
 ## Installation
 
-Install Git and Python 3 with pip. Homebrew is recommended for macOS.
+Install Git and Python 3.5+.
 
 Then, clone the repo and install requirements:
 
