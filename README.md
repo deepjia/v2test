@@ -10,11 +10,11 @@ demo/demo
 
 ## Introduction
 
-V2Test is a lightweight data driven testing framework based on Python 3.
+V2Test is a lightweight data driven testing framework with a neat WebGUI. It's easy to develop new engines for V2Test.
 
-Now integrated with WebGUI: V2Test Management.
+V2Test is now dockerized: <https://hub.docker.com/r/deepjia/v2test/>
 
-Engines:
+### Engines
 
 * [UI] Selenium browser automation test.
 * [HTTP] Requests HTTP interface test.
@@ -23,13 +23,14 @@ Engines:
 * [Appium] Appium iOS/Android test.
 * [Locust] Locust load test.
 
-Modes:
+### Modes
 
+* [WebGUI] Run cases locally.
 * [Standalone] Run cases locally.
 * [Receiver] Run cases received from senders and send report back.
 * [Sender] Send cases to receivers and gather reports.
 
-Todos:
+### Todos
 
 * [Doc] Add guide for integration with Jenkins and Travis CI.
 * [Doc] Documents for human beings.
@@ -38,7 +39,12 @@ Todos:
 * [Engine] May add some unit test engine.
 * [Framework] Add loop/repeat action. 
 
-It's easy to develop new engines.
+
+### Docker
+
+<https://hub.docker.com/r/deepjia/v2test/>
+
+### Snapshots
 
 ![login](https://user-images.githubusercontent.com/1452602/38806756-e9f8fb80-41ac-11e8-8f35-267807301e22.png)
 ![add](https://user-images.githubusercontent.com/1452602/38806771-f801eb38-41ac-11e8-8246-1d8379c4a994.png)
@@ -52,7 +58,7 @@ It's easy to develop new engines.
 
 ## Prerequisites
 
-Python 3.5+
+Python 3.5+ or Docker.
 
 ## Installation
 
@@ -71,6 +77,7 @@ pip install -r requirements.txt
 ```
 
 Docker:
+
 ```bash
 docker pull deepjia/v2test
 ```
